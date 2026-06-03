@@ -4,6 +4,7 @@
 <filesystem>
   type: Local filesystem (Node.js fs)
   reads: agent/progress.yaml (configurable via PROGRESS_YAML_PATH env var)
+  project_root: Derived from PROGRESS_YAML_PATH (set by CLI --path or auto-detect)
   polling: mtime check every 2s via fs.statSync
 </filesystem>
 
@@ -15,14 +16,15 @@
 </ci>
 
 <testing>
-  framework: Vitest + @testing-library/react + jsdom
-  files: 5 test files, 25 tests
-  coverage: yaml-loader (10), hooks (4), components (6), integration (3), sync (2)
+  framework: Vitest + @testing-library/react + @testing-library/jest-dom + jsdom
+  coverage: @vitest/coverage-v8 (50% thresholds)
+  files: 11 test files, 71 tests
+  breakdown: yaml-loader (10), integration (3), sync (2), data-source (4), components (5), remote-render (14), cli-e2e (4), docs-viewer (4), maintenance (5), server-controls (6), smoke (14)
 </testing>
 
 <deployment>
-  model: Local dev tool — no cloud deployment
-  primary: npm run dev (reads local progress.yaml)
-  future: npx acp-visualizer (P2 roadmap — starts local server)
+  model: Local dev tool — npm run dev, npx acp-visualizer, or curl install
+  install: curl -fsSL https://raw.githubusercontent.com/ssucipto/ACPEnhanced-Visual/main/scripts/install.sh | bash
+  cli: npx acp-visualizer --path, --repo, --port, --no-open
   demo: Vercel could serve this repo's own progress.yaml as a self-hosting status page (not primary)
 </deployment>

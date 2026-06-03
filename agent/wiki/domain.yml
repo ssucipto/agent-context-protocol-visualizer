@@ -4,23 +4,40 @@
 
 entities:
   - ProgressData:        Top-level container (project, milestones, tasks, recent_work, next_steps, notes, current_blockers)
-  - ProjectMetadata:     name, version, started, status (active|in_progress|completed|not_started), current_milestone, description
+  - ProjectMetadata:     name, version, started, status (completed|in_progress|active|not_started|planned), current_milestone, description
   - Milestone:           Named deliverable with priority, status, progress %, task counts, timeline, notes — id injected from YAML key
   - Task:                Individual work item with priority, status, estimated/actual hours, milestoneId injected from parent YAML key
   - WorkEntry:           Dated log entry with description and items array
   - SearchResult:        Discriminated union — { type: 'milestone', item: Milestone } | { type: 'task', item: Task }
-  - StatusFilter:        Union type — 'all' | 'active' | 'in_progress' | 'completed' | 'not_started'
+  - StatusFilter:        Union type — 'all' | 'completed' | 'in_progress' | 'active' | 'not_started' | 'planned'
+  - DataSourceConfig:    Discriminated union — { type: 'local', path } | { type: 'github', repo, ref, filePath, tokenEnv }
+  - ProjectConfig:       { name, source, path?, repo?, branch? } — multi-project configuration
+  - ServerInstance:      { port, pid, process } — running server detection
+  - SystemInfo:          { nodeVersion, os, totalMemMB, freeMemMB } — system health
+  - DocFile:             { name, path, dir } — markdown document metadata
+  - RouteCostEntry:      { routeId, task, executor, cost, timestamp } — ACP routing ledger
+  - NpmDependency:       { name, version, type: 'prod' | 'dev' } — package.json deps
 
 operations:
   data_fetching:
-    - fetchProgress:       Server function (TanStack Start) — readFileSync → js-yaml → Zod validate → typed ProgressData
-    - fetchWatchToken:     Server function — statSync mtime for polling-based auto-refresh (2s interval)
-    - useProgressData:     React hook — initial fetch + 2s polling loop with cleanup on unmount
+    - fetchProgress:        Server function — readFileSync → js-yaml → Zod validate → typed ProgressData (uses PROGRESS_YAML_PATH)
+    - fetchWatchToken:      Server function — statSync mtime for polling-based auto-refresh (2s interval)
+    - fetchGitHubProgress:  Server function — raw.githubusercontent.com with ETag caching, rate limit detection
+    - fetchRemoteWatch:     Server function — HEAD + ETag for remote change detection
+    - listDocs / readDoc:   Server functions — browse and read project markdown docs with path traversal guard
+    - scanServers:          Server function — lsof/netstat port scan for running instances
+    - killByPort:           Server function — terminate process on specified port
+    - getSystemInfo:        Server function — Node.js version, OS, memory stats
+    - fetchRouteCosts:      Server function — parse ACP Enhanced routing ledger
+    - fetchPackageJson:     Server function — read target project package.json
   parsing:
-    - parseProgressYaml:   YAML string → js-yaml parse → Zod validate → inject milestone.id / task.milestoneId
-    - formatParseError:    ZodError → human-readable field-path error messages
+    - parseProgressYaml:    YAML string → js-yaml parse → Zod validate → inject milestone.id / task.milestoneId
+    - formatParseError:     ZodError → human-readable field-path error messages
+  lifecycle:
+    - shutdown:             POST /api/shutdown — graceful server termination
+    - getServerInfo:        GET — port, data source type + path
   search:
-    - buildSearchIndex:    fuse.js index — milestones + tasks searchable by name (weight 0.7) and ID (weight 0.3)
+    - buildSearchIndex:     fuse.js index — milestones + tasks searchable by name (weight 0.7) and ID (weight 0.3)
 
 modules:
   server/routes/api:

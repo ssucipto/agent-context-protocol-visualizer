@@ -5,6 +5,22 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-06-03
+
+### Added
+
+- **Server Lifecycle & UX (M33)**: Shutdown endpoint, Stop Server button, port/source display, auto-shutdown
+- `server/routes/api/shutdown.ts` — POST `/api/shutdown` + `getServerInfo` server functions
+- `src/components/ServerControls.tsx` — `StopServerButton` + `ServerInfoDisplay`
+- `beforeunload` auto-shutdown via `sendBeacon` (best-effort tab-close cleanup)
+- `scripts/find-port.mjs` — port conflict reporting (shows PID + process name)
+
+### Changed
+
+- **🎉 ALL 9 MILESTONES COMPLETE — Project status: completed**
+- Header redesigned with server info + stop button alongside search
+- 57 tasks completed across M25-M33
+
 ## [1.3.1] - 2026-06-03
 
 ### Fixed

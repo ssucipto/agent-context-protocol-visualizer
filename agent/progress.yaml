@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.0.1
   started: 2026-06-03
-  status: active
-  current_milestone: M33
+  status: completed
+  current_milestone: null
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -135,12 +135,12 @@ milestones:
   M33:
     name: Server Lifecycle & UX
     priority: 1
-    status: not_started
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-03
+    completed: 2026-06-03
     estimated_weeks: '0.5'
-    tasks_completed: 0
+    tasks_completed: 4
     tasks_total: 4
     file: agent/milestones/milestone-33-server-lifecycle-ux.md
     notes: |
@@ -610,30 +610,46 @@ tasks:
     - id: task-184
       name: Shutdown endpoint /api/shutdown
       priority: 1
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:30:00Z
       file: agent/tasks/milestone-33-server-lifecycle-ux/task-184-shutdown-endpoint.md
       estimated_hours: '0.5'
+      actual_hours: 0.1
+      completed_date: 2026-06-03T02:40:00Z
+      notes: server/routes/api/shutdown.ts — POST /api/shutdown with 100ms delayed exit.
 
     - id: task-185
       name: Stop Server button in ProjectHeader
       priority: 1
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:30:00Z
       file: agent/tasks/milestone-33-server-lifecycle-ux/task-185-stop-server-button.md
       estimated_hours: '0.5'
+      actual_hours: 0.2
+      completed_date: 2026-06-03T02:40:00Z
+      notes: src/components/ServerControls.tsx — StopServerButton with stopped state.
 
     - id: task-186
       name: Port + data source display in header
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:30:00Z
       file: agent/tasks/milestone-33-server-lifecycle-ux/task-186-port-source-display.md
       estimated_hours: '0.5'
+      actual_hours: 0.2
+      completed_date: 2026-06-03T02:40:00Z
+      notes: ServerInfoDisplay shows :port · source type + path in header.
 
     - id: task-187
       name: Auto-shutdown on tab close + port conflict report
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T02:30:00Z
       file: agent/tasks/milestone-33-server-lifecycle-ux/task-187-auto-shutdown-port-report.md
       estimated_hours: '1'
+      actual_hours: 0.3
+      completed_date: 2026-06-03T02:40:00Z
+      notes: beforeunload sendBeacon in __root.tsx. find-port.mjs reports PID+process.
 
 recent_work:
   - date: 2026-06-03

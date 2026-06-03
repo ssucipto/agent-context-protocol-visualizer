@@ -2,10 +2,11 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { TabBar } from '../components/TabBar'
+import { StopServerButton, ServerInfoDisplay } from '../components/ServerControls'
 import { loadProjectConfigs, saveProjectConfigs } from '../lib/projects'
 
 import appCss from '../styles.css?url'
@@ -135,6 +136,15 @@ function RootLayout() {
     }
   };
 
+  // Auto-shutdown on tab close (best-effort via sendBeacon)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      navigator.sendBeacon('/api/shutdown');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   return (
     <div className="flex h-screen overflow-hidden font-sans">
       {/* Sidebar */}
@@ -152,14 +162,16 @@ function RootLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top header */}
-        <header className="shrink-0 border-b border-gray-200 px-4 py-2 bg-white">
-          <SearchBar
-            value={query}
-            onChange={(v) => {
-              setQuery(v)
-            }}
-            placeholder="Search milestones and tasks…"
-          />
+        <header className="shrink-0 border-b border-gray-200 px-4 py-2 bg-white flex items-center gap-3">
+          <div className="flex-1">
+            <SearchBar
+              value={query}
+              onChange={(v) => { setQuery(v) }}
+              placeholder="Search milestones and tasks…"
+            />
+          </div>
+          <ServerInfoDisplay />
+          <StopServerButton />
         </header>
 
         {/* Tab bar for multi-project navigation */}

@@ -4,12 +4,12 @@
 
 entities:
   - ProgressData:        Top-level container (project, milestones, tasks, recent_work, next_steps, notes, current_blockers)
-  - ProjectMetadata:     name, version, started, status (completed|in_progress|active|not_started|planned), current_milestone, description
+  - ProjectMetadata:     name, version, started, status (completed|in_progress|active|not_started|planned|blocked), current_milestone, description
   - Milestone:           Named deliverable with priority, status, progress %, task counts, timeline, notes — id injected from YAML key
   - Task:                Individual work item with priority, status, estimated/actual hours, milestoneId injected from parent YAML key
   - WorkEntry:           Dated log entry with description and items array
   - SearchResult:        Discriminated union — { type: 'milestone', item: Milestone } | { type: 'task', item: Task }
-  - StatusFilter:        Union type — 'all' | 'completed' | 'in_progress' | 'active' | 'not_started' | 'planned'
+  - StatusFilter:        Union type — 'all' | 'completed' | 'in_progress' | 'active' | 'not_started' | 'planned' | 'blocked'
   - DataSourceConfig:    Discriminated union — { type: 'local', path } | { type: 'github', repo, ref, filePath, tokenEnv }
   - ProjectConfig:       { name, source, path?, repo?, branch? } — multi-project configuration
   - ServerInstance:      { port, pid, process } — running server detection
@@ -31,8 +31,8 @@ operations:
     - fetchRouteCosts:      Server function — parse ACP Enhanced routing ledger
     - fetchPackageJson:     Server function — read target project package.json
   parsing:
-    - parseProgressYaml:    YAML string → js-yaml parse → Zod validate → inject milestone.id / task.milestoneId
-    - formatParseError:     ZodError → human-readable field-path error messages
+    - parseProgressYaml:    YAML string → js-yaml parse → normalizeYaml (array→record, status mapping, field aliasing) → Zod validate → inject milestone.id / task.milestoneId
+    - formatParseError:     YAMLException | ZodError → human-readable error messages with diagnostic hints
   lifecycle:
     - shutdown:             POST /api/shutdown — graceful server termination
     - getServerInfo:        GET — port, data source type + path
@@ -50,8 +50,8 @@ modules:
     purpose: Core domain logic — types, Zod schemas, YAML parsing, data fetching hook, fuse.js search
   src/components:
     path: src/components/
-    files: [MilestoneTable.tsx, MilestoneTree.tsx, ProgressBar.tsx, StatusBadge.tsx, FilterBar.tsx, SearchBar.tsx, NextSteps.tsx, OverallProgress.tsx, ProjectHeader.tsx, TaskList.tsx]
-    purpose: Presentational UI components — table, tree, badges, bars, filters
+    files: [MilestoneTable.tsx, MilestoneTree.tsx, ProgressBar.tsx, StatusBadge.tsx, FilterBar.tsx, SearchBar.tsx, NextSteps.tsx, OverallProgress.tsx, ProjectHeader.tsx, TaskList.tsx, ErrorCard.tsx]
+    purpose: Presentational UI components — table, tree, badges, bars, filters, error cards
   src/routes:
     path: src/routes/
     files: [__root.tsx, index.tsx, milestones.tsx, search.tsx]

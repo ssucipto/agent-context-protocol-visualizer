@@ -8,7 +8,7 @@
 Browser (React SPA)
   │
   ├─ TanStack Start Server Functions (Node.js) — 11 total
-  │   ├─ progress.ts       — readFileSync → js-yaml → sanitizeDates → Zod → typed JSON
+  │   ├─ progress.ts       — readFileSync → js-yaml → normalizeYaml → sanitizeDates → Zod → typed JSON
   │   ├─ watch.ts          — statSync → mtime for polling
   │   ├─ github-fetch.ts   — raw.githubusercontent.com with ETag caching
   │   ├─ remote-watch.ts   — HEAD + ETag for remote change detection
@@ -20,13 +20,14 @@ Browser (React SPA)
   │   ├─ shutdown.ts       — POST /api/shutdown + getServerInfo
   │   └─ projects-config.ts — Load/save .visualizer-projects.json
   │
-  └─ Client Components — 25 total
+  └─ Client Components — 26 total
       ├─ useProgressData()     — hook: dual-source fetch + adaptive polling (2s/10s)
       ├─ fuse.js index         — fuzzy search across milestones + tasks
       ├─ TanStack Table        — sortable milestone grid
       ├─ PollManager           — shared adaptive polling (M30)
       ├─ TabBar + ProjectTabs  — multi-project dashboard (M30)
-      └─ 25 components across Dashboard, Intelligence, Tools, Management sections
+      ├─ ErrorCard             — amber warning card for YAML/Zod errors with fix steps
+      └─ 26 components across Dashboard, Intelligence, Tools, Management sections
 ```
 
 ## Service Boundaries
@@ -36,21 +37,21 @@ Browser (React SPA)
 | `server/routes/api/` | 11 server functions: progress, watch, github-fetch, remote-watch, memory-files, docs, maintenance, route-costs, package-json, shutdown, projects-config |
 | `src/lib/types.ts` | TypeScript interfaces: ProgressData, ProjectMetadata, Milestone, Task, WorkEntry |
 | `src/lib/schemas.ts` | Zod schemas with nullable current_milestone, date coercion, item preprocessors |
-| `src/lib/yaml-loader.ts` | Parse YAML → sanitizeDates → Zod validate → inject IDs → typed ProgressData |
+| `src/lib/yaml-loader.ts` | Parse YAML → normalizeYaml (array→record, status mapping, field aliasing) → sanitizeDates → Zod validate → inject IDs → typed ProgressData |
 | `src/lib/data-source.ts` | React hook: dual-source (local/GitHub), adaptive polling (2s/10s), per-project config |
 | `src/lib/search.ts` | fuse.js index builder for client-side fuzzy search |
 | `src/lib/config.ts` | DataSourceConfig parser, token resolution (client-safe, no fs) |
 | `src/lib/projects.ts` | ProjectConfig types, client-safe env parsing |
 | `src/lib/poll-manager.ts` | Shared PollManager with adaptive intervals (M30) |
-| `src/lib/format-error.ts` | Human-readable ZodError → UI-friendly messages |
-| `src/components/` | 25 components: table, tree, badges, filters, search, progress, tabs, dialogs, aggregate, timeline, ADR browser, lessons feed, pattern library, package inventory, audit index, docs viewer, maintenance page, server controls, rate limit banner |
+| `src/lib/format-error.ts` | YAMLException detection with diagnostic hints + human-readable ZodError → UI-friendly messages |
+| `src/components/` | 26 components: table, tree, badges, filters, search, progress, tabs, dialogs, aggregate, timeline, ADR browser, lessons feed, pattern library, package inventory, audit index, docs viewer, maintenance page, server controls, rate limit banner, error card |
 
 ## Key Data Flows
 
 1. **Page load** → `useProgressData(config)` → detects source type → routes to `fetchProgress` or `fetchGitHubProgress` → sanitizeDates → Zod validate → inject IDs → typed ProgressData → render
 2. **Polling** → adaptive: 2s local (`statSync`), 10s remote (`HEAD + ETag`) → if mtime/ETag changed → re-fetch
 3. **Search** → user types → fuse.js on indexed milestones+tasks → filter results
-4. **Filtering** → user clicks status → supports completed, in_progress, active, not_started, planned
+4. **Filtering** → user clicks status → supports completed, in_progress, active, not_started, planned, blocked
 5. **Multi-project** → TabBar with URL-driven state (`?tab=name`) → all tabs rendered simultaneously (CSS visibility)
 6. **Memory views** → server functions parse agent/memory/*.md → typed data → SessionTimeline, ADRBrowser, etc.
 7. **Server lifecycle** → Stop button → POST /api/shutdown → beforeunload sendBeacon for auto-cleanup

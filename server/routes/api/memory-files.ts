@@ -69,23 +69,24 @@ export const fetchADRs = createServerFn({ method: 'GET' })
     if (!raw) return { entries: [] as ADREntry[], error: null };
 
     const entries: ADREntry[] = [];
-    // Match markdown sections like "### ADR-001: Title"
-    const sections = raw.split(/^### /m).slice(1);
+    // Match markdown sections like "## ADR-001: Title" or "### ADR-001: Title"
+    const sections = raw.split(/^#{2,3}\s+ADR-/m).filter((s) => s.trim());
     for (const section of sections) {
       const lines = section.split('\n');
-      const header = lines[0] || '';
+      const header = `ADR-${lines[0] || ''}`;
       const idMatch = header.match(/(ADR-\d+)/);
       const titleMatch = header.match(/ADR-\d+[-:]\s*(.+)/);
       const body = lines.slice(1).join('\n');
 
-      const statusMatch = body.match(/\*\*Status\*\*:\s*(.+)/);
-      const contextMatch = body.match(/\*\*Context\*\*:?\s*\n([\s\S]*?)(?=\n\*\*|\n###|$)/);
-      const decisionMatch = body.match(/\*\*Decision\*\*:?\s*\n([\s\S]*?)(?=\n\*\*|\n###|$)/);
-      const reopenMatch = body.match(/DO NOT re-open unless:\s*\n([\s\S]*?)(?=\n\*\*|\n###|$)/);
+      const statusMatch = body.match(/\*\*Status:?\*\*\s*(.+)/i);
+      const contextMatch = body.match(/\*\*Context:?\*\*\s*\n([\s\S]*?)(?=\n\*\*|$)/i);
+      const decisionMatch = body.match(/\*\*Decision:?\*\*\s*\n([\s\S]*?)(?=\n\*\*|$)/i);
+      // Check for re-open trigger patterns
+      const reopenMatch = body.match(/(?:DO NOT re-open|Re-open trigger|Reopen unless)[:\s]*\n?([\s\S]*?)(?=\n\*\*|\n##|$)/i);
 
       entries.push({
         id: idMatch?.[1] || header.trim(),
-        title: titleMatch?.[1]?.trim() || header.trim(),
+        title: titleMatch?.[1]?.trim() || lines[0]?.trim() || header.trim(),
         status: statusMatch?.[1]?.trim() || 'Unknown',
         context: contextMatch?.[1]?.trim() || '',
         decision: decisionMatch?.[1]?.trim() || '',

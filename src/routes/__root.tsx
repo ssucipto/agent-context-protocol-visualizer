@@ -51,7 +51,7 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'Intelligence', icon: '📋', defaultOpen: false,
+    label: 'Project Intelligence', icon: '📋', defaultOpen: false,
     links: [
       { to: '/sessions' as const, label: 'Sessions' },
       { to: '/adrs' as const, label: 'ADRs' },

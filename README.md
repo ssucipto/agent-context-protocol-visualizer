@@ -52,61 +52,54 @@
 
 ## 🚦 Quick Start
 
+### One-liner install
+```bash
+curl -fsSL https://raw.githubusercontent.com/ssucipto/ACPEnhanced-Visual/main/scripts/install.sh | bash
+```
+Installs to `~/.acp/visualizer/`, links `acp-visualizer` globally.
+
+Then from any ACP Enhanced project:
+```bash
+acp-visualizer                              # auto-detect
+acp-visualizer --repo owner/repo            # GitHub remote
+acp-visualizer --path /custom/path.yaml     # custom path
+```
+
+### Or via npx (zero-install)
+```bash
+npx acp-visualizer
+```
+
+### Manual clone
 ```bash
 git clone https://github.com/ssucipto/ACPEnhanced-Visual
-cd ACPEnhanced-Visual
-npm install
-
-# Point at your ACP Enhanced project and open browser:
+cd ACPEnhanced-Visual && npm install
 PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run visualize
 ```
-
-Or use the one-liner:
-```bash
-npm run visualize
-```
-(uses default `agent/progress.yaml` in the visualizer's own directory)
 
 ---
 
 ## 📦 Installation (Alongside ACP Enhanced)
 
-The visualizer works alongside any ACP Enhanced project. Two install options:
+The visualizer works alongside any ACP Enhanced project. Three install options:
 
-### Option A: Global install (recommended)
+### Option A: curl one-liner (recommended)
+```bash
+curl -fsSL https://raw.githubusercontent.com/ssucipto/ACPEnhanced-Visual/main/scripts/install.sh | bash
+```
+This clones to `~/.acp/visualizer/`, installs dependencies, and links `acp-visualizer` to `~/.local/bin/`. Make sure `~/.local/bin` is in your PATH.
 
+### Option B: npx (zero-install)
+```bash
+npx acp-visualizer
+```
+No install needed. Downloads and runs on the fly.
+
+### Option C: Manual clone
 ```bash
 git clone https://github.com/ssucipto/ACPEnhanced-Visual ~/.acp/visualizer
-cd ~/.acp/visualizer && npm install
+cd ~/.acp/visualizer && npm install && npm link
 ```
-
-Then from any ACP Enhanced project:
-```bash
-PROGRESS_YAML_PATH=$(pwd)/agent/progress.yaml ~/.acp/visualizer/npm run visualize
-```
-
-### Option B: Sibling directory
-
-```bash
-# From your ACP Enhanced project:
-cd ..
-git clone https://github.com/ssucipto/ACPEnhanced-Visual
-cd ACPEnhanced-Visual && npm install
-
-# Then:
-PROGRESS_YAML_PATH=../acp-enhanced/agent/progress.yaml npm run visualize
-```
-
-### Via ACP Enhanced command
-
-If you have the visualizer installed at `~/.acp/visualizer/`, ACP Enhanced's `/acp-visualize` slash command auto-detects it:
-
-```
-/acp-visualize                    # Opens your current project
-/acp-visualize --path /other/project/agent/progress.yaml
-```
-
-### Multi-Project Support
 
 The visualizer auto-detects available ports starting from 3000. Run `/acp-visualize`
 in multiple VS Code windows and each project gets its own port:

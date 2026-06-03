@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 
 export interface DocFile {
   name: string;
@@ -12,6 +12,17 @@ export interface DocContent {
   content: string;
   path: string;
   error: string | null;
+}
+
+/**
+ * Derive the project root for doc browsing.
+ * When PROGRESS_YAML_PATH is set (via CLI --path or auto-detect),
+ * use that project's root. Otherwise fall back to CWD.
+ */
+function getProjectRoot(): string {
+  const yamlPath = process.env['PROGRESS_YAML_PATH'];
+  if (yamlPath) return dirname(dirname(yamlPath)); // up from agent/progress.yaml → project root
+  return process.cwd();
 }
 
 const DOC_DIRS = [
@@ -30,11 +41,11 @@ const DOC_DIRS = [
  */
 export const listDocs = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const cwd = process.cwd();
+    const projectRoot = getProjectRoot();
     const files: DocFile[] = [];
 
     for (const { dir, label } of DOC_DIRS) {
-      const fullPath = join(cwd, dir);
+      const fullPath = join(projectRoot, dir);
       if (!existsSync(fullPath)) continue;
 
       try {
@@ -70,9 +81,10 @@ export const listDocs = createServerFn({ method: 'GET' })
 export const readDoc = createServerFn({ method: 'GET' })
   .inputValidator((input: { path: string }) => input)
   .handler(async ({ data }) => {
-    const fullPath = join(process.cwd(), data.path);
+    const projectRoot = getProjectRoot();
+    const fullPath = join(projectRoot, data.path);
     // Security: prevent traversal outside project root
-    if (!fullPath.startsWith(process.cwd())) {
+    if (!fullPath.startsWith(projectRoot)) {
       return { content: '', path: data.path, error: 'Access denied' };
     }
     try {

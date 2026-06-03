@@ -1,6 +1,6 @@
 ---
 created: 2026-06-03
-completed:
+completed: 2026-06-03
 ---
 
 # Task 165: TabBar Component

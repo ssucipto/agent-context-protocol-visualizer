@@ -1,6 +1,6 @@
 ---
 created: 2026-06-03
-completed:
+completed: 2026-06-03
 ---
 
 # Task 166: Per-Tab Data Fetching via Shared PollManager

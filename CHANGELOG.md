@@ -5,6 +5,23 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-03
+
+### Added
+
+- **Multi-Project View (M30)**: Tabbed dashboard supporting multiple projects simultaneously
+- `src/lib/projects.ts` — project config loader from `.visualizer-projects.json`, env var, or default
+- `src/components/TabBar.tsx` — tab navigation with active highlight, add/remove controls
+- `src/components/AggregateHome.tsx` — aggregate stats across all projects (project count, active count, milestones)
+- `src/components/AddProjectDialog.tsx` — modal to add projects at runtime (local file or GitHub repo)
+- URL-driven tab state via `?tab=name` query param with browser back/forward support
+- Per-tab independent data fetching via `useProgressData`
+
+### Changed
+
+- Root layout now renders TabBar between search header and main content
+- Index route supports multi-project rendering with `validateSearch`
+
 ## [1.0.6] - 2026-06-03
 
 ### Fixed

@@ -1,10 +1,12 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
+import { TabBar } from '../components/TabBar'
+import { loadProjectConfigs } from '../lib/projects'
 
 import appCss from '../styles.css?url'
 
@@ -47,6 +49,16 @@ const NAV_LINKS = [
 
 function RootLayout() {
   const [query, setQuery] = useState('')
+  const navigate = useNavigate()
+  const search = useSearch({ strict: false }) as { tab?: string }
+
+  // Load project configs (stable across renders — module-level in production)
+  const projects = useMemo(() => loadProjectConfigs(), [])
+  const activeTab = search.tab || 'Home'
+  const allTabs = useMemo(() => {
+    const homeFirst = { name: 'Home', source: 'local' as const };
+    return [homeFirst, ...projects];
+  }, [projects]);
 
   return (
     <div className="flex h-screen overflow-hidden font-sans">
@@ -83,6 +95,19 @@ function RootLayout() {
             placeholder="Search milestones and tasks…"
           />
         </header>
+
+        {/* Tab bar for multi-project navigation */}
+        <TabBar
+          projects={allTabs}
+          activeTab={activeTab}
+          onSelect={(name) => {
+            void navigate({ to: '/', search: { tab: name === 'Home' ? undefined : name } as any });
+          }}
+          onAdd={() => {
+            // Navigate with a flag to show the add dialog
+            void navigate({ to: '/', search: { tab: activeTab, add: '1' } as any });
+          }}
+        />
 
         {/* Rate limit warning (only visible when approaching GitHub limits) */}
         <RateLimitBanner />

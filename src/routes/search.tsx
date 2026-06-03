@@ -24,7 +24,7 @@ function SearchPage() {
   }, [data, q])
 
   if (loading) return <p className="p-4 text-gray-500">Loading…</p>
-  if (error) return <p className="p-4 text-red-500">Error: {error}</p>
+  if (error) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
 
   if (!q || q.length < 2) {
     return (

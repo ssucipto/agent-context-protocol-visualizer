@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { readFileSync } from 'node:fs';
 import { parseProgressYaml } from '../../../src/lib/yaml-loader';
+import { formatParseError } from '../../../src/lib/format-error';
 
 const DEFAULT_PATH = process.env['PROGRESS_YAML_PATH'] ?? 'agent/progress.yaml';
 
@@ -16,7 +17,7 @@ export const fetchProgress = createServerFn({ method: 'GET' })
       const raw = readFileSync(filePath, 'utf-8');
       return { data: parseProgressYaml(raw), error: null };
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      const message = formatParseError(err);
       return { data: null, error: message };
     }
   });

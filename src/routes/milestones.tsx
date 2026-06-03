@@ -13,7 +13,7 @@ function MilestonesPage() {
   const [filter, setFilter] = useState<StatusFilter>('all')
 
   if (loading) return <p className="p-4 text-gray-500">Loading…</p>
-  if (error ?? !data) return <p className="p-4 text-red-500">Error: {error}</p>
+  if (error ?? !data) return <p className="p-4 text-red-500 whitespace-pre-wrap">Error: {error}</p>
 
   const milestones = Object.values(data.milestones)
 

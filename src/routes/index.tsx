@@ -11,7 +11,7 @@ function Home() {
   if (loading)
     return <div className="p-6 text-gray-400 animate-pulse">Loading…</div>
   if (error ?? !data)
-    return <div className="p-6 text-red-500">Error: {error}</div>
+    return <div className="p-6 text-red-500 whitespace-pre-wrap">Error: {error}</div>
 
   const milestones = Object.values(data.milestones)
 

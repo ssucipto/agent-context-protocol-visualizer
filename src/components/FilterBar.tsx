@@ -1,4 +1,4 @@
-export type StatusFilter = 'all' | 'active' | 'in_progress' | 'completed' | 'not_started' | 'planned';
+export type StatusFilter = 'all' | 'active' | 'in_progress' | 'completed' | 'not_started' | 'planned' | 'blocked';
 
 interface Props {
   value: StatusFilter;
@@ -9,6 +9,7 @@ const OPTIONS: { label: string; value: StatusFilter }[] = [
   { label: 'All', value: 'all' },
   { label: 'Active', value: 'active' },
   { label: 'In Progress', value: 'in_progress' },
+  { label: 'Blocked', value: 'blocked' },
   { label: 'Completed', value: 'completed' },
   { label: 'Not Started', value: 'not_started' },
   { label: 'Planned', value: 'planned' },

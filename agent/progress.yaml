@@ -686,6 +686,25 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      🌐 Multi-project YAML format normalization — the visualizer now handles
+      ACP Enhanced format variants from different projects (FIFOZ). Added
+      normalizeYaml() layer between YAML parse and Zod validation:
+      milestones array→record, status value mapping (superseded→completed,
+      draft→not_started), summary→description conversion for recent_work.
+      Added 'blocked' status across all schemas, types, StatusBadge, and FilterBar.
+      Audit #21 found 2 gaps (file:null in milestones, recent_work.date null)
+      — both fixed. All 71 tests pass, FIFOZ parses cleanly.
+    items:
+      - "🌐 normalizeYaml() — milestones array→record, status mapping, summary→description"
+      - "🔧 normalizeStatus — maps superseded/draft/blocked/todo/done to known values"
+      - "🔧 Added 'blocked' to 3 Zod schemas + 3 TypeScript interfaces + StatusBadge + FilterBar"
+      - "🔧 Fixed file:null strip for milestones (was tasks-only)"
+      - "🔧 Fixed recent_work.date null guard (?? '')"
+      - "📋 Audit #21 — normalization gaps audit (3 findings, 2 actionable fixed)"
+      - "📦 Version 1.5.1 — CHANGELOG + commit"
+      - "✓ No artifacts — all templates, skip staleness check"
+  - date: 2026-06-03
+    description: |
       🐛 Fixed React 19 "Expected static flag was missing" error flood.
       TanStackDevtools and TanStackRouterDevtoolsPanel were rendering during
       SSR in the shell component, causing static tree mismatch with hydration.
@@ -811,12 +830,14 @@ notes:
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.8.2 framework installed
   - GitHub Actions CI: lint + test + build on push/PR
-  - 20 audit reports, all findings resolved
+  - 21 audit reports, all findings resolved
   - npx acp-visualizer CLI ready for npm publish
-  - 16 routes: Home, Milestones, Search, Sessions, ADRs, Lessons, Patterns, Packages, Audits, Docs, Maintenance, Route Costs
-  - 20+ components across Dashboard, Intelligence, Tools, Management sections
+  - 16 routes across Dashboard, Intelligence, Tools, Management sections
+  - 20+ components — ErrorCard, StatusBadge (6 colors), ClientOnly wrapper
   - React 19 SSR fix: devtools wrapped in ClientOnly (useSyncExternalStore)
-  - YAML error UX: ErrorCard component with smart formatParseError for YAMLException
+  - YAML error UX: ErrorCard with smart formatParseError for YAMLException
+  - Multi-project normalization: milestones array→record, status mapping, summary→description
+  - Schema supports 'blocked' status project-wide (schemas, types, UI components)
   - Collapsible sidebar with localStorage persistence
   - Dual data source: local filesystem + GitHub remote
   - Path traversal protection on all file-reading server functions

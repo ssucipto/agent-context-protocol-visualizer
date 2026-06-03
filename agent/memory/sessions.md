@@ -94,3 +94,41 @@
     only makes sense as a self-hosting demo, not as the primary usage model.
     Primary distribution: npm run dev (today), npx acp-visualizer (P2 roadmap).
 
+
+- date: 2026-06-03
+  executor: copilot
+  persona: A
+  tasks_completed:
+    - react-19-ssr-fix-devtools-clientonly
+    - yaml-error-ux-improvements
+    - multi-project-normalization
+    - blocked-status-across-ui
+    - audit-21-normalization-gaps
+    - version-1.5.1-commit
+  done:
+    - __root-tsx-clientonly-wrapper-usebsyncExternalStore-for-devtools
+    - format-error-ts-yamlexception-detection-with-diagnostic-hints
+    - errorcard-tsx-amber-warning-card-with-how-to-fix-steps
+    - routes-index-milestones-search-updated-to-errorcard
+    - aggregatehome-failed-to-load-error-tooltip-on-hover
+    - yaml-loader-ts-normalizeYaml-milestones-array-to-record
+    - yaml-loader-ts-normalizeStatus-superseded-draft-mapping
+    - schemas-ts-blocked-status-in-3-zod-enums
+    - types-ts-blocked-status-in-3-interfaces
+    - statusbadge-tsx-blocked-red-badge
+    - filterbar-tsx-blocked-filter-option
+    - yaml-loader-ts-file-null-strip-for-milestones
+    - yaml-loader-ts-recent-work-date-null-guard
+    - audit-21-normalization-gaps-report
+    - acp-update-progress-yaml-normalization-entry
+    - version-1.5.1-package-json-changelog-commit
+  deferred:
+    - npm-publish-v1.5.0
+    - e2e-tests-playwright
+  key_fact: >
+    A normalizeYaml() layer between yaml.load() and Zod.parse() cleanly
+    handles ACP format variants across projects — array→record conversion,
+    status value mapping (superseded→completed), and field name aliasing
+    (summary→description). The Zod schema stays strict; normalization
+    handles the mess. Also: useSyncExternalStore provides a zero-render
+    ClientOnly wrapper that avoids useState+useEffect hydration cycles.

@@ -3,7 +3,7 @@ project:
   version: 1.0.1
   started: 2026-06-03
   status: active
-  current_milestone: M29
+  current_milestone: M30
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -75,12 +75,12 @@ milestones:
   M29:
     name: GitHub Remote Read Support
     priority: 1
-    status: in_progress
-    progress: 83
+    status: completed
+    progress: 100
     started: 2026-06-03
-    completed: null
+    completed: 2026-06-03
     estimated_weeks: '1'
-    tasks_completed: 5
+    tasks_completed: 6
     tasks_total: 6
     file: agent/milestones/milestone-29-github-remote-read.md
     notes: |
@@ -386,9 +386,13 @@ tasks:
     - id: task-182
       name: Integration test — remote GitHub data renders through components
       priority: 2
-      status: not_started
+      status: completed
+      started: 2026-06-03T01:10:00Z
       file: agent/tasks/milestone-29-github-remote-read/task-182-integration-test-remote-render.md
       estimated_hours: '1'
+      actual_hours: 0.5
+      completed_date: 2026-06-03T01:30:00Z
+      notes: 14 tests — MilestoneTable, MilestoneTree, FilterBar, SearchBar, ProgressBar, StatusBadge, ProjectHeader, OverallProgress, NextSteps, fuse.js search, error states (401/403/404/network).
 
   M30:
     - id: task-164

@@ -5,6 +5,14 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-06-03
+
+### Added
+
+- `test/remote-render.test.tsx` — 14 integration tests verifying remote GitHub data renders through all components
+- M29 milestone complete: GitHub Remote Read Support (6/6 tasks)
+- Total: 39 tests passing (25 + 14 new)
+
 ## [1.0.4] - 2026-06-03
 
 ### Added

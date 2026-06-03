@@ -1,6 +1,6 @@
 ---
 created: 2026-06-03
-completed:
+completed: 2026-06-03
 ---
 
 # Task 182: Integration Test — Remote GitHub Data Renders Through Components

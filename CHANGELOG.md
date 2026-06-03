@@ -5,6 +5,14 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-06-03
+
+### Added
+
+- `src/lib/config.ts` — DataSourceConfig parser with PROGRESS_YAML_REPO support
+- `.github-tokens.json` loader for per-repo PAT tokens
+- Multi-account GitHub token resolution (tokenEnv > .github-tokens.json > GITHUB_TOKEN)
+
 ## [1.0.1] - 2026-06-03
 
 ### Fixed

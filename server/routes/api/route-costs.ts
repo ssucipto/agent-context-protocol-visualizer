@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { readFileSync, existsSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 export interface RouteCostEntry {
   routeId: string;
@@ -9,12 +10,19 @@ export interface RouteCostEntry {
   timestamp: string;
 }
 
+/** Derive project root from PROGRESS_YAML_PATH (set by CLI), fall back to CWD. */
+function getProjectRoot(): string {
+  const yamlPath = process.env['PROGRESS_YAML_PATH'];
+  if (yamlPath) return dirname(dirname(yamlPath));
+  return process.cwd();
+}
+
 /**
  * Parse ACP Enhanced's routing ledger for cost data.
  */
 export const fetchRouteCosts = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const ledgerPath = process.cwd() + '/agent/routing/ledger.md';
+    const ledgerPath = getProjectRoot() + '/agent/routing/ledger.md';
     if (!existsSync(ledgerPath)) return { entries: [] as RouteCostEntry[], error: null };
 
     try {

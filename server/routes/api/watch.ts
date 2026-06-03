@@ -1,12 +1,19 @@
 import { createServerFn } from '@tanstack/react-start';
 import { statSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
 
 const DEFAULT_PATH = process.env['PROGRESS_YAML_PATH'] ?? 'agent/progress.yaml';
 
+/** Derive project root for path traversal guard. Respects PROGRESS_YAML_PATH. */
+function getProjectRoot(): string {
+  const yamlPath = process.env['PROGRESS_YAML_PATH'];
+  if (yamlPath) return dirname(dirname(yamlPath));
+  return process.cwd();
+}
+
 function sanitizePath(input: string): string {
   const resolved = resolve(input);
-  if (!resolved.startsWith(resolve(process.cwd()))) {
+  if (!resolved.startsWith(resolve(getProjectRoot()))) {
     throw new Error(`Access denied: path outside project root`);
   }
   return resolved;

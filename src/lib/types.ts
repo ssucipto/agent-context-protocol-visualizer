@@ -12,7 +12,7 @@ export interface ProjectMetadata {
   name: string;
   version: string;
   started: string;
-  status: 'active' | 'in_progress' | 'completed' | 'not_started';
+  status: 'active' | 'in_progress' | 'completed' | 'not_started' | 'planned';
   current_milestone: string | null;
   description: string;
 }
@@ -21,7 +21,7 @@ export interface Milestone {
   id: string;           // injected key (e.g. "M25") not in raw YAML
   name: string;
   priority: number;
-  status: 'completed' | 'in_progress' | 'not_started';
+  status: 'completed' | 'in_progress' | 'not_started' | 'active' | 'planned';
   progress: number;
   started: string | null;
   completed: string | null;

@@ -9,7 +9,6 @@ set -e
 
 INSTALL_DIR="${HOME}/.acp/visualizer"
 REPO_URL="https://github.com/ssucipto/ACPEnhanced-Visual.git"
-NPM_PREFIX="${HOME}/.local"
 
 echo "📥 ACP Progress Visualizer Installer"
 echo ""
@@ -32,21 +31,26 @@ cd "$INSTALL_DIR"
 npm install
 echo "  ✓ Dependencies installed"
 
-# Configure npm to use user-owned prefix (avoids EACCES on /usr/local)
+# Link the CLI globally (avoid npm link — it ignores user prefix on macOS)
 echo "  → Linking acp-visualizer command..."
-mkdir -p "$NPM_PREFIX/bin"
-npm config set prefix "$NPM_PREFIX" 2>/dev/null || true
+LOCAL_BIN="${HOME}/.local/bin"
+mkdir -p "$LOCAL_BIN"
 
-# Check if ~/.local/bin is in PATH, warn if not
-if ! echo "$PATH" | tr ':' '\n' | grep -q "$NPM_PREFIX/bin"; then
+# Remove old symlink if it exists (from previous install attempts)
+rm -f "$LOCAL_BIN/acp-visualizer"
+
+# Create symlink directly — no npm link, no sudo
+ln -sf "$INSTALL_DIR/bin/acp-visualizer.mjs" "$LOCAL_BIN/acp-visualizer"
+chmod +x "$LOCAL_BIN/acp-visualizer"
+echo "  ✓ Linked to $LOCAL_BIN/acp-visualizer"
+
+# Check if ~/.local/bin is in PATH
+if ! echo "$PATH" | tr ':' '\n' | grep -qF "$LOCAL_BIN"; then
   echo ""
-  echo "  ⚠️  Add this to your shell profile (~/.zshrc or ~/.bashrc):"
+  echo "  ⚠️  Add this to your shell profile (~/.zshrc):"
   echo "     export PATH=\"\$HOME/.local/bin:\$PATH\""
   echo ""
 fi
-
-npm link
-echo "  ✓ Linked to $NPM_PREFIX/bin/acp-visualizer"
 
 echo ""
 echo "✅ ACP Progress Visualizer installed!"

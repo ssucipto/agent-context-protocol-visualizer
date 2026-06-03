@@ -22,6 +22,12 @@ priorities:
 
 repo: github.com/ssucipto/agent-context-protocol-visualizer
 
+progress_yaml_target:
+  source: ssucipto/acp-enhanced
+  version: 6.8.2
+  verified_date: 2026-06-03
+  notes: "Schema verified against real ACP Enhanced progress.yaml (5354 lines, 45+ milestones)"
+
 team: solo-developer
 priorities:
   - correctness: command docs must be unambiguous for any LLM

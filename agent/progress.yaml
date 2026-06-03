@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.4.2
   started: 2026-06-03
-  status: completed
-  current_milestone: null
+  status: active
+  current_milestone: M34
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -146,6 +146,21 @@ milestones:
     notes: |
       Shutdown endpoint, Stop Server button, port + source display,
       auto-shutdown on tab close, port conflict report.
+
+  M34:
+    name: Polish, Docs Viewer & Maintenance
+    priority: 1
+    status: planned
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '2'
+    tasks_completed: 0
+    tasks_total: 7
+    file: agent/milestones/milestone-34-polish-docs-maintenance.md
+    notes: |
+      Markdown document viewer, port display fix, maintenance page,
+      packages page overhaul, installation alignment, sidebar links.
 
 tasks:
   M25:

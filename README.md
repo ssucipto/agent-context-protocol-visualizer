@@ -101,6 +101,17 @@ git clone https://github.com/ssucipto/ACPEnhanced-Visual ~/.acp/visualizer
 cd ~/.acp/visualizer && npm install && npm link
 ```
 
+### 🔄 Updating
+
+Same command as install — the script auto-detects and updates:
+```bash
+curl -fsSL https://raw.githubusercontent.com/ssucipto/ACPEnhanced-Visual/main/scripts/install.sh | bash
+```
+Or manually:
+```bash
+cd ~/.acp/visualizer && git pull && npm install
+```
+
 The visualizer auto-detects available ports starting from 3000. Run `/acp-visualize`
 in multiple VS Code windows and each project gets its own port:
 

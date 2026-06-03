@@ -83,7 +83,16 @@ export const progressDataSchema = z.object({
   milestones: z.record(z.string(), milestoneSchema),
   tasks: z.record(z.string(), z.array(taskSchema)),
   recent_work: z.array(workEntrySchema).default([]),
-  next_steps: z.array(z.string()).default([]),
-  notes: z.array(z.string()).default([]),
-  current_blockers: z.array(z.string()).default([]),
+  next_steps: z.preprocess(
+    (v) => Array.isArray(v) ? v.map(itemToString) : [],
+    z.array(z.string()),
+  ).default([]),
+  notes: z.preprocess(
+    (v) => Array.isArray(v) ? v.map(itemToString) : [],
+    z.array(z.string()),
+  ).default([]),
+  current_blockers: z.preprocess(
+    (v) => Array.isArray(v) ? v.map(itemToString) : [],
+    z.array(z.string()),
+  ).default([]),
 });

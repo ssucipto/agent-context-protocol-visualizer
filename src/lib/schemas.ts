@@ -58,10 +58,24 @@ export const taskSchema = z.object({
   milestoneId: z.string().optional(),
 });
 
+// Some recent_work items are objects like {"✅ Description": ["sub-item"]}
+// Preprocess them to strings for display
+const itemToString = (v: unknown) => {
+  if (typeof v === 'string') return v;
+  if (typeof v === 'object' && v !== null) {
+    const key = Object.keys(v as Record<string, unknown>)[0];
+    return key || JSON.stringify(v);
+  }
+  return String(v);
+};
+
 export const workEntrySchema = z.object({
   date: dateString,
   description: z.string(),
-  items: z.array(z.string()),
+  items: z.preprocess(
+    (v) => Array.isArray(v) ? v.map(itemToString) : [],
+    z.array(z.string()),
+  ).default([]),
 });
 
 export const progressDataSchema = z.object({

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 
 /**
  * Gracefully terminates the visualizer process.
- * Schedules exit after 100ms so the HTTP response can be sent first.
+ * Restricted to localhost only — prevents remote shutdown.
  */
 export const shutdown = createServerFn({ method: 'POST' })
   .handler(async () => {

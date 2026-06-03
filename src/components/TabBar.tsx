@@ -34,6 +34,7 @@ export function TabBar({ projects, activeTab, onSelect, onAdd, onRemove }: Props
               className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gray-300 text-white text-xs
                          flex items-center justify-center opacity-0 group-hover:opacity-100
                          hover:bg-red-500 transition-all"
+              aria-label={`Remove ${p.name}`}
               title={`Remove ${p.name}`}
             >
               ×

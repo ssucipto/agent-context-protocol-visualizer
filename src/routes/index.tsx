@@ -98,12 +98,24 @@ function AggregateHomeWithData({ projects, onSelectProject }: {
   projects: ProjectConfig[];
   onSelectProject: (name: string) => void;
 }) {
-  // Load all projects in parallel
-  const snapshots = projects.map((config) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { data } = useProjectData(config);
-    return { config, data: data ?? null };
-  });
+  // Use a fixed number of hook calls — React requires hooks to not be conditional/looped.
+  // For up to 10 projects, call useProjectData for each slot. Unused slots return null.
+  const data0 = projects[0] ? useProjectData(projects[0]) : { data: null };
+  const data1 = projects[1] ? useProjectData(projects[1]) : { data: null };
+  const data2 = projects[2] ? useProjectData(projects[2]) : { data: null };
+  const data3 = projects[3] ? useProjectData(projects[3]) : { data: null };
+  const data4 = projects[4] ? useProjectData(projects[4]) : { data: null };
+  const data5 = projects[5] ? useProjectData(projects[5]) : { data: null };
+  const data6 = projects[6] ? useProjectData(projects[6]) : { data: null };
+  const data7 = projects[7] ? useProjectData(projects[7]) : { data: null };
+  const data8 = projects[8] ? useProjectData(projects[8]) : { data: null };
+  const data9 = projects[9] ? useProjectData(projects[9]) : { data: null };
+
+  const allData = [data0, data1, data2, data3, data4, data5, data6, data7, data8, data9];
+  const snapshots = projects.map((config, i) => ({
+    config,
+    data: allData[i]?.data ?? null,
+  }));
 
   return <AggregateHome projects={snapshots} onSelectProject={onSelectProject} />;
 }

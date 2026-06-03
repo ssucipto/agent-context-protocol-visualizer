@@ -5,6 +5,20 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-06-03
+
+### Security
+
+- **Path traversal sanitization** in `fetchProgress` + `fetchWatchToken` — paths validated to stay within project root
+- **Shutdown endpoint** documented as localhost-only
+
+### Fixed
+
+- **Rules of Hooks violation** in AggregateHomeWithData — replaced `.map()` loop with fixed hook calls (max 10 projects)
+- **Accessibility**: TabBar × button now has `aria-label`
+- **Missing `.env.example`** created with all supported environment variables
+- **Error messages** no longer expose internal file system paths to clients
+
 ## [1.4.0] - 2026-06-03
 
 ### Added

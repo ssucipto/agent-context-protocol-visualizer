@@ -12,8 +12,9 @@ function getProjectRoot(): string {
 }
 
 function sanitizePath(input: string): string {
-  const resolved = resolve(input);
-  if (!resolved.startsWith(resolve(getProjectRoot()))) {
+  const base = resolve(getProjectRoot());
+  const resolved = resolve(input.startsWith('/') ? input : resolve(base, input));
+  if (!resolved.startsWith(base)) {
     throw new Error(`Access denied: path outside project root`);
   }
   return resolved;

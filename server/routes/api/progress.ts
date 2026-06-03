@@ -14,9 +14,13 @@ function getProjectRoot(): string {
 }
 
 function sanitizePath(input: string): string {
-  const resolved = resolve(input);
-  // Prevent traversal outside project root (which may differ from CWD)
-  if (!resolved.startsWith(resolve(getProjectRoot()))) {
+  // Resolve relative paths against the project root (from PROGRESS_YAML_PATH),
+  // not CWD. This handles the case where the client sends a relative path
+  // like 'agent/progress.yaml' but the server was started with a different
+  // project via --path /some/other/project.
+  const base = resolve(getProjectRoot());
+  const resolved = resolve(input.startsWith('/') ? input : resolve(base, input));
+  if (!resolved.startsWith(base)) {
     throw new Error(`Access denied: path outside project root`);
   }
   return resolved;

@@ -25,7 +25,7 @@ export const projectMetadataSchema = z.object({
   version: z.string(),
   started: dateString,
   status: z.enum(['active', 'in_progress', 'completed', 'not_started']),
-  current_milestone: z.string(),
+  current_milestone: z.string().nullable(),
   description: z.string(),
 });
 

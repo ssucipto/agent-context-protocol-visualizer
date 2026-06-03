@@ -7,7 +7,8 @@ import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { TabBar } from '../components/TabBar'
 import { StopServerButton, ServerInfoDisplay } from '../components/ServerControls'
-import { loadProjectConfigs, saveProjectConfigs } from '../lib/projects'
+import { loadProjectConfigs, saveProjectConfigs } from '../../server/routes/api/projects-config'
+import type { ProjectConfig } from '../lib/projects'
 
 import appCss from '../styles.css?url'
 
@@ -71,10 +72,16 @@ const NAV_SECTIONS = [
 
 function CollapsibleSection({ section }: { section: typeof NAV_SECTIONS[0] }) {
   const storageKey = `nav-${section.label}`;
-  const [open, setOpen] = useState(() => {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : null;
-    return stored !== null ? stored === 'true' : section.defaultOpen;
-  });
+  const [open, setOpen] = useState(section.defaultOpen);
+
+  // Hydrate from localStorage AFTER mount — avoids SSR mismatch
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored !== null) setOpen(stored === 'true');
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggle = () => {
     const next = !open;
@@ -118,8 +125,11 @@ function RootLayout() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false }) as { tab?: string }
 
-  // Load project configs (stable across renders — module-level in production)
-  const [projects, setProjects] = useState(() => loadProjectConfigs())
+  // Load project configs via server function
+  const [projects, setProjects] = useState<ProjectConfig[]>([])
+  useEffect(() => {
+    loadProjectConfigs().then((r) => setProjects(r.projects)).catch(() => {});
+  }, []);
   const activeTab = search.tab || 'Home'
   const allTabs = useMemo(() => {
     const homeFirst = { name: 'Home', source: 'local' as const };
@@ -129,7 +139,7 @@ function RootLayout() {
   const handleRemove = (name: string) => {
     const updated = projects.filter((p) => p.name !== name);
     setProjects(updated);
-    try { saveProjectConfigs(updated); } catch { /* ignore */ }
+    try { saveProjectConfigs({ data: { projects: updated } }); } catch { /* ignore */ }
     // If removing the active tab, switch to Home
     if (activeTab === name) {
       void navigate({ to: '/', search: {} as any });

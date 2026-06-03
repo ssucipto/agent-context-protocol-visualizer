@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { NextSteps } from '../components/NextSteps'
 import { OverallProgress } from '../components/OverallProgress'
 import { ProjectHeader } from '../components/ProjectHeader'
 import { AggregateHome } from '../components/AggregateHome'
 import { AddProjectDialog } from '../components/AddProjectDialog'
 import { useProgressData } from '../lib/data-source'
-import { loadProjectConfigs, saveProjectConfigs, type ProjectConfig } from '../lib/projects'
+import { loadProjectConfigs, saveProjectConfigs } from '../../server/routes/api/projects-config'
+import type { ProjectConfig } from '../lib/projects'
 
 export const Route = createFileRoute('/')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -48,13 +49,16 @@ function ProjectTab({ config, visible }: { config: ProjectConfig; visible: boole
 function Home() {
   const { tab, add } = Route.useSearch()
   const navigate = useNavigate()
-  const [projects, setProjects] = useState<ProjectConfig[]>(() => loadProjectConfigs())
+  const [projects, setProjects] = useState<ProjectConfig[]>([])
+  useEffect(() => {
+    loadProjectConfigs().then((r) => setProjects(r.projects)).catch(() => {});
+  }, []);
   const [showAddDialog, setShowAddDialog] = useState(add === '1')
 
   const handleAdd = useCallback((config: ProjectConfig) => {
     const updated = [...projects, config];
     setProjects(updated);
-    try { saveProjectConfigs(updated); } catch { /* ignore */ }
+    try { saveProjectConfigs({ data: { projects: updated } }); } catch { /* ignore */ }
     // Switch to new project's tab
     void navigate({ to: '/', search: { tab: config.name } as any });
   }, [projects, navigate]);

@@ -11,6 +11,12 @@ import type { Milestone } from '../lib/types';
 import { ProgressBar } from './ProgressBar';
 import { StatusBadge } from './StatusBadge';
 
+function s(v: unknown): string {
+  if (v instanceof Date) return v.toISOString().split('T')[0];
+  if (v === null || v === undefined) return '—';
+  return String(v);
+}
+
 const col = createColumnHelper<Milestone>();
 
 const columns = [
@@ -56,13 +62,13 @@ const columns = [
   col.accessor('started', {
     header: 'Started',
     cell: (info) => (
-      <span className="font-mono text-xs text-gray-500">{info.getValue() ?? '—'}</span>
+      <span className="font-mono text-xs text-gray-500">{s(info.getValue())}</span>
     ),
   }),
   col.accessor('completed', {
     header: 'Completed',
     cell: (info) => (
-      <span className="font-mono text-xs text-gray-500">{info.getValue() ?? '—'}</span>
+      <span className="font-mono text-xs text-gray-500">{s(info.getValue())}</span>
     ),
   }),
 ];

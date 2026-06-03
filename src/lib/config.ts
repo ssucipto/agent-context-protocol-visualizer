@@ -1,6 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export interface DataSourceConfig {
@@ -62,38 +59,28 @@ function parseRepoString(raw: string): { repo: string; ref: string; filePath: st
 
 // ── Token Loading ──────────────────────────────────────────────────────────
 
-let tokenMapCache: TokenMap | null = null;
-
 /**
  * Load .github-tokens.json from the project root.
- * File is gitignored — maps owner → PAT.
- *
- * Format: { "ssucipto": "ghp_xxx", "rygandev01": "ghp_yyy" }
+ * Client-safe: returns empty map. Server-side token resolution
+ * happens via server functions (github-fetch.ts, remote-watch.ts)
+ * which have access to the filesystem.
  */
 export function loadTokenMap(): TokenMap {
-  if (tokenMapCache) return tokenMapCache;
-  try {
-    const raw = readFileSync(join(process.cwd(), '.github-tokens.json'), 'utf-8');
-    tokenMapCache = JSON.parse(raw) as TokenMap;
-    return tokenMapCache;
-  } catch {
-    tokenMapCache = {};
-    return tokenMapCache;
-  }
+  return {};
 }
 
 /**
  * Resolve a token for a GitHub repo owner.
  * Priority: 1) tokenEnv env var  2) .github-tokens.json owner mapping  3) GITHUB_TOKEN fallback
  */
-export function resolveToken(owner: string, tokenEnv?: string): string | null {
+export function resolveToken(owner: string, tokenEnv?: string, tokenMapOverride?: TokenMap): string | null {
   // 1) Per-repo token via explicit env var name
   if (tokenEnv && process.env[tokenEnv]) {
     return process.env[tokenEnv]!;
   }
 
-  // 2) .github-tokens.json owner → token mapping
-  const tokenMap = loadTokenMap();
+  // 2) .github-tokens.json owner → token mapping (or server override)
+  const tokenMap = tokenMapOverride ?? loadTokenMap();
   if (tokenMap[owner]) {
     return tokenMap[owner];
   }

@@ -11,6 +11,20 @@ function readAgentFile(relativePath: string): string | null {
   return readFileSync(fullPath, 'utf-8');
 }
 
+/** Recursively convert Date objects to ISO strings — prevents React rendering errors */
+function sanitizeDates(obj: unknown): unknown {
+  if (obj instanceof Date) return obj.toISOString().split('T')[0];
+  if (Array.isArray(obj)) return obj.map(sanitizeDates);
+  if (obj && typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(obj as Record<string, unknown>)) {
+      result[key] = sanitizeDates(val);
+    }
+    return result;
+  }
+  return obj;
+}
+
 function parseYamlBlocks(raw: string): Record<string, any>[] {
   // Sessions/lessons/patterns use YAML blocks separated by `---` or `- date:`
   const blocks: Record<string, any>[] = [];
@@ -19,7 +33,7 @@ function parseYamlBlocks(raw: string): Record<string, any>[] {
     try {
       const parsed = yaml.load(doc.trim());
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        blocks.push(parsed as Record<string, any>);
+        blocks.push(sanitizeDates(parsed) as Record<string, any>);
       }
     } catch { /* skip malformed blocks */ }
   }
@@ -27,7 +41,7 @@ function parseYamlBlocks(raw: string): Record<string, any>[] {
   if (blocks.length === 0) {
     try {
       const parsed = yaml.load(raw);
-      if (Array.isArray(parsed)) return parsed as Record<string, any>[];
+      if (Array.isArray(parsed)) return sanitizeDates(parsed) as Record<string, any>[];
     } catch { /* not a list */ }
   }
   return blocks;
@@ -143,7 +157,7 @@ export const fetchPackages = createServerFn({ method: 'GET' })
     const raw = readAgentFile('agent/manifest.yaml');
     if (!raw) return { entries: [] as PackageEntry[], error: null };
     try {
-      const manifest = yaml.load(raw) as any;
+      const manifest = sanitizeDates(yaml.load(raw)) as any;
       const pkgs = manifest?.packages || {};
       const entries: PackageEntry[] = Object.entries(pkgs).map(([name, pkg]: [string, any]) => ({
         name,

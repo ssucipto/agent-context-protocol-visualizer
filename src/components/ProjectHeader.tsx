@@ -1,6 +1,12 @@
 import type { ProjectMetadata } from '../lib/types';
 import { StatusBadge } from './StatusBadge';
 
+function safeStr(v: unknown): string {
+  if (v instanceof Date) return v.toISOString().split('T')[0];
+  if (v === null || v === undefined) return '—';
+  return String(v);
+}
+
 export function ProjectHeader({ project }: { project: ProjectMetadata }) {
   return (
     <div className="border-b border-gray-200 pb-4 mb-6">
@@ -10,9 +16,9 @@ export function ProjectHeader({ project }: { project: ProjectMetadata }) {
         <span className="text-xs font-mono text-gray-400">v{project.version}</span>
       </div>
       <div className="flex gap-4 text-xs text-gray-500">
-        <span>Started: {project.started}</span>
+        <span>Started: {safeStr(project.started)}</span>
         <span>
-          Current milestone: <strong>{project.current_milestone}</strong>
+          Current milestone: <strong>{project.current_milestone ?? '—'}</strong>
         </span>
       </div>
       <p className="mt-2 text-sm text-gray-600">{project.description}</p>

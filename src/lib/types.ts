@@ -13,7 +13,7 @@ export interface ProjectMetadata {
   version: string;
   started: string;
   status: 'active' | 'in_progress' | 'completed' | 'not_started';
-  current_milestone: string;
+  current_milestone: string | null;
   description: string;
 }
 

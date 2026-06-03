@@ -1,7 +1,25 @@
 import { createServerFn } from '@tanstack/react-start';
+import { readFileSync, existsSync } from 'node:fs';
 import { parseProgressYaml } from '../../../src/lib/yaml-loader';
 import { formatParseError } from '../../../src/lib/format-error';
-import { resolveToken } from '../../../src/lib/config';
+import { resolveToken, type TokenMap } from '../../../src/lib/config';
+
+// ── Server-side token map loading ──────────────────────────────────────────
+
+let _tokenMap: TokenMap | null = null;
+
+function loadServerTokenMap(): TokenMap {
+  if (_tokenMap) return _tokenMap;
+  const tokenPath = process.cwd() + '/.github-tokens.json';
+  if (existsSync(tokenPath)) {
+    try {
+      _tokenMap = JSON.parse(readFileSync(tokenPath, 'utf-8')) as TokenMap;
+      return _tokenMap;
+    } catch { /* malformed JSON */ }
+  }
+  _tokenMap = {};
+  return _tokenMap;
+}
 
 // ── ETag Cache ─────────────────────────────────────────────────────────────
 
@@ -41,7 +59,7 @@ export const fetchGitHubProgress = createServerFn({ method: 'GET' })
     const url = `https://raw.githubusercontent.com/${repo}/${ref}/${filePath}`;
 
     const owner = repo.split('/')[0];
-    const token = resolveToken(owner, tokenEnv);
+    const token = resolveToken(owner, tokenEnv, loadServerTokenMap());
 
     const headers: Record<string, string> = {};
     if (token) {

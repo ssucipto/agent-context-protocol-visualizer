@@ -1,5 +1,17 @@
 import { createServerFn } from '@tanstack/react-start';
-import { resolveToken } from '../../../src/lib/config';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolveToken, type TokenMap } from '../../../src/lib/config';
+
+// ── Server-side token loading ──────────────────────────────────────────────
+
+let _tokenMap: TokenMap | null = null;
+function loadServerTokenMap(): TokenMap {
+  if (_tokenMap) return _tokenMap;
+  const p = process.cwd() + '/.github-tokens.json';
+  if (existsSync(p)) { try { _tokenMap = JSON.parse(readFileSync(p, 'utf-8')); return _tokenMap!; } catch {} }
+  _tokenMap = {};
+  return _tokenMap;
+}
 
 // Shared ETag cache (same as github-fetch.ts — import or share)
 const etagCache = new Map<string, string>();
@@ -23,7 +35,7 @@ export const fetchRemoteWatch = createServerFn({ method: 'GET' })
     const url = `https://raw.githubusercontent.com/${repo}/${ref}/${filePath}`;
 
     const owner = repo.split('/')[0];
-    const token = resolveToken(owner, tokenEnv);
+    const token = resolveToken(owner, tokenEnv, loadServerTokenMap());
 
     const headers: Record<string, string> = {};
     if (token) {

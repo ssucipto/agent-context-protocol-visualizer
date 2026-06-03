@@ -1,6 +1,6 @@
 project:
   name: ACPEnhanced-Visual
-  version: 1.0.1
+  version: 1.4.1
   started: 2026-06-03
   status: completed
   current_milestone: null
@@ -654,6 +654,24 @@ tasks:
 recent_work:
   - date: 2026-06-03
     description: |
+      🔧 Debugging session: Fixed critical runtime issues preventing dashboard
+      from working. node:fs client-side bundling, Date rendering errors,
+      SSR hydration mismatch, schema nullability for completed projects.
+      43 tests passing, dashboard verified across all 13 routes.
+    items:
+      - "🔧 Moved node:fs ops from client files (projects.ts, config.ts) to server functions"
+      - "🔧 Added recursive sanitizeDates() to yaml-loader.ts + memory-files.ts"
+      - "🔧 Fixed CollapsibleSection SSR hydration (localStorage in useEffect)"
+      - "🔧 Made current_milestone nullable (all milestones complete)"
+      - "🔧 Added path traversal sanitization to progress.ts + watch.ts"
+      - "🔧 Fixed Rules of Hooks violation in AggregateHomeWithData"
+      - "🔧 Created .env.example with all supported env vars"
+      - "🔧 Cross-milestone audit #14: 14 findings fixed across security/code/accessibility"
+      - "✅ Dashboard verified: 13 routes, collapsible sidebar, Stop button, server info"
+      - "⚠️ Client-side node:fs is a known TanStack Start pattern — moved to server functions"
+
+  - date: 2026-06-03
+    description: |
       📋 /acp-init: Bootstrapped domain knowledge from source — extracted 7 entities,
       5 modules, 6 operations across the TanStack Start codebase. Cleaned wiki docs
       from prior session artifacts.
@@ -704,14 +722,17 @@ next_steps:
   - "Maintenance: monitor ACP Enhanced schema changes"
 
 notes:
-  - 4 milestones complete (M25-M28): MVP, schema, CI, sync
-  - 25 tests passing across 5 test files
+  - 🎉 ALL 9 MILESTONES COMPLETE (M25-M33) — Project status: completed
+  - 57 tasks completed across 9 milestones
+  - 43 tests passing across 7 test files
   - ACP Enhanced v6.8.2 framework installed
-  - Zod validation replacing all type assertions
   - GitHub Actions CI: lint + test + build on push/PR
-  - 4 audits: scope+sync, plan gap, final check, post-impl verification
-  - 9 carryovers tracked
-  - /acp-init domain extraction: 7 entities, 5 modules, 6 operations mapped
-  - Wiki docs (domain, identity, integrations) current as of 2026-06-03
+  - 14 audit reports, all findings resolved
+  - npx acp-visualizer CLI ready for npm publish
+  - 13 routes: Home, Milestones, Search, Sessions, ADRs, Lessons, Patterns, Packages, Audits
+  - 20+ components across Dashboard, Intelligence, Management sections
+  - Collapsible sidebar with localStorage persistence
+  - Dual data source: local filesystem + GitHub remote
+  - Path traversal protection on all file-reading server functions
 
 current_blockers: []

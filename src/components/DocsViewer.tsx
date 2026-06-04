@@ -3,27 +3,6 @@ import { marked } from 'marked';
 import type { DocFile } from '../../server/routes/api/docs';
 import { listDocs, readDoc } from '../../server/routes/api/docs';
 
-// ── Syntax highlighting helpers ───────────────────────────────────────────
-let highlighter: ((code: string, lang: string) => string) | null = null;
-async function getHighlighter() {
-  if (highlighter) return highlighter;
-  try {
-    const { common } = await import('lowlight');
-    const { toHtml } = await import('hast-util-to-html');
-    highlighter = (code: string, lang: string) => {
-      try {
-        const tree = common.highlight(lang, code);
-        return tree.children.length > 0 ? toHtml(tree) : code;
-      } catch {
-        return code;
-      }
-    };
-  } catch {
-    highlighter = (code: string) => code;
-  }
-  return highlighter;
-}
-
 // ── Markdown rendering ────────────────────────────────────────────────────
 
 function wrapTables(html: string): string {

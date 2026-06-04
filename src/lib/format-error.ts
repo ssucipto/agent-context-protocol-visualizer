@@ -44,13 +44,6 @@ function formatYamlError(err: YAMLException): string {
   const col = (err.mark?.column ?? 0) + 1;
   const reason = err.reason ?? 'parse error';
 
-  // Extract the problematic line for context
-  let problemLine = '';
-  if (err.mark?.buffer) {
-    const lines = err.mark.buffer.split('\n');
-    problemLine = lines[err.mark.line]?.trim() ?? '';
-  }
-
   // Try to diagnose common causes
   let hint = '';
   if (reason.includes('bad indentation') || reason.includes('mapping values')) {

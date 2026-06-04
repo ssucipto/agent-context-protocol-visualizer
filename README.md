@@ -3,10 +3,10 @@
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.5.1-blue?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/status-completed-success?style=flat-square" alt="Status">
-  <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.8.2-6e47ff?style=flat-square" alt="ACP Enhanced">
+  <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.9.1-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/milestones-11%20complete-blueviolet?style=flat-square" alt="Milestones">
-  <img src="https://img.shields.io/badge/tests-71%20passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/milestones-13%20complete-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/tests-86%20passing-success?style=flat-square" alt="Tests">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI. Supports local filesystem and GitHub remote sources, multi-project tabs, and extended ACP memory visualizations.
@@ -46,7 +46,9 @@
 ### Developer Experience
 - ⏹ **Stop Server Button** — one-click shutdown from the browser
 - 🚀 **npx acp-visualizer** — zero-install CLI with auto-detect
-- 📂 **Collapsible Sidebar** — organized into Dashboard, Intelligence, Tools, Management
+- 📂 **Collapsible Sidebar** — icon-only mode (w-14) saves space, organized into 5 sections
+- 📖 **Command Reference** — searchable /commands page with 70 ACP + visualizer commands
+- 📄 **Markdown Viewer 2.0** — syntax highlighting, TOC, dark mode, fullscreen, drag-and-drop
 - ⚠️ **Error Card** — amber warnings for YAML parse/Zod errors with fix steps
 - 🌐 **Multi-Project Normalization** — supports ACP format variants (array milestones, alt statuses)
 
@@ -218,7 +220,7 @@ Browser (React SPA)
   │   ├─ shutdown.ts       — POST /api/shutdown + getServerInfo
   │   └─ 4 more server functions
   │
-  └─ Client (13 routes, 20+ components)
+  └─ Client (17 routes, 25+ components)
       ├─ useProgressData()  — dual-source (local/GitHub), adaptive polling
       ├─ fuse.js index      — fuzzy search across milestones + tasks
       ├─ TabBar + Tabs      — multi-project dashboard (M30)
@@ -240,7 +242,7 @@ Browser (React SPA)
 
 ## 🔗 Schema Compatibility
 
-This visualizer targets **ACP Enhanced v6.8.2**'s `progress.yaml` schema.
+This visualizer targets **ACP Enhanced v6.9.1**'s `progress.yaml` schema.
 
 To verify compatibility after an ACP Enhanced update:
 

@@ -5,6 +5,27 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-06-04
+
+### Added
+
+- **ACP Command Reference (M36)**: `/commands` route with searchable 70-command reference table. Parses 66 `agent/commands/*.md` files + 4 hardcoded visualizer CLI commands. Namespace badges (acp/git/visualizer), category filter, expandable rows with version/status/flags.
+- **Collapsible Sidebar (M37)**: Toggle button (☰/✕) with icon-only mode (w-14). State persisted in localStorage with 200ms CSS transition.
+- **Markdown Viewer 2.0 (M37)**: Full rewrite of DocsViewer with heading anchor links, floating TOC sidebar with IntersectionObserver scroll tracking, code block copy buttons + language badges, drag-and-drop .md file support, dark/light theme toggle, font size control (S/M/L), fullscreen mode, image lightbox, back-to-top button.
+- **DocsViewer visual polish (M37)**: Blockquote styling, responsive TOC collapse at 1024px, print styles, prose-invert dark mode, heading anchor `#` links on hover.
+- **Command Reference tests**: 11 component tests (CommandReference) + 4 parser unit tests (parseCommandFile).
+- **DocsViewer tests**: 4 tests with IntersectionObserver mock.
+
+### Changed
+
+- **Sidebar**: Reorganized into 5 sections (Dashboard, Project Intelligence, Tools, Reference, Management). New "📖 Reference" section with Commands link.
+- **DocsViewer**: Now uses `lowlight` + `hast-util-to-html` for syntax highlighting (removed in 1.5.3 type fix; CSS-based highlighting via `.hljs-*` classes).
+- **Test suite**: 86 tests across 13 test files (up from 71/11).
+
+### Fixed
+
+- TypeScript CI errors: removed unused `getHighlighter`, `problemLine`, `vi`, `beforeEach` imports.
+
 ## [1.5.1] - 2026-06-03
 
 ### Fixed

@@ -1,11 +1,11 @@
 # System Architecture
 # Update monthly or when service boundaries change
 # Load ONE section at a time — never fully loaded
-# last_verified: 2026-06-03
+# last_verified: 2026-06-04
 
 ## Command → Script Binding
 
-Commands in `agent/commands/` (63 files) are LLM directives — they tell the agent WHAT to do.
+Commands in `agent/commands/` (66 files) are LLM directives — they tell the agent WHAT to do.
 Scripts in `agent/scripts/` (29 files) are bash implementations — they DO the work.
 Binding: command frontmatter lists scripts in **Scripts**: field; package.yaml
 contents.commands[].scripts array is the authoritative source.

@@ -18,8 +18,8 @@
 <testing>
   framework: Vitest + @testing-library/react + @testing-library/jest-dom + jsdom
   coverage: @vitest/coverage-v8 (50% thresholds)
-  files: 11 test files, 71 tests
-  breakdown: yaml-loader (10), integration (3), sync (2), data-source (4), components (5), remote-render (14), cli-e2e (4), docs-viewer (4), maintenance (5), server-controls (6), smoke (14)
+  files: 13 test files, 86 tests
+  breakdown: yaml-loader (10), integration (3), sync (2), data-source (4), components (5), remote-render (14), cli-e2e (4), docs-viewer (4), maintenance (5), server-controls (6), smoke (14), command-reference (11), commands (4)
 </testing>
 
 <deployment>

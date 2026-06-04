@@ -5,8 +5,8 @@
   <img src="https://img.shields.io/badge/status-completed-success?style=flat-square" alt="Status">
   <img src="https://img.shields.io/badge/ACP%20Enhanced-v6.9.1-6e47ff?style=flat-square" alt="ACP Enhanced">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/milestones-13%20complete-blueviolet?style=flat-square" alt="Milestones">
-  <img src="https://img.shields.io/badge/tests-86%20passing-success?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/milestones-14%20complete-blueviolet?style=flat-square" alt="Milestones">
+  <img src="https://img.shields.io/badge/tests-92%20passing-success?style=flat-square" alt="Tests">
 </p>
 
 > **Bring your ACP Enhanced progress.yaml to life.** A web dashboard that turns structured YAML milestone data into an interactive, sortable, searchable UI. Supports local filesystem and GitHub remote sources, multi-project tabs, and extended ACP memory visualizations.
@@ -35,13 +35,13 @@
 - 📡 **ETag Caching** — 304 responses don't count toward rate limits
 - ⚠️ **Rate Limit Awareness** — warning banner when approaching limits
 
-### Extended Visualizations
-- 📅 **Session Timeline** — collapsible entries with key facts
-- 📋 **ADR Browser** — filterable by status, re-open trigger highlights
-- 📝 **Lessons Feed** — grouped by task_type with mistake/correction pairs
-- 🧩 **Pattern Library** — searchable catalog with code references
-- 📦 **Package Inventory** — installed ACP packages table
-- 📊 **Audit Index** — report table with finding counts + severity badges
+### Extended Visualizations (v2.0)
+- 📅 **Session Timeline** — search, stats, week grouping, key facts inline
+- 📋 **ADR Browser** — search, read-more expand, consequences, source links
+- 📝 **Lessons Feed** — search, priority filter, most-common stats, per-lesson dates
+- 🧩 **Pattern Library** — search, tag grouping, usage counts, code references
+- 📦 **Package Inventory** — search, outdated highlighting, wanted versions, NPM+ACP tabs
+- 📊 **Audit Index** — search, severity+status filters, source links, finding stats badges
 
 ### Developer Experience
 - ⏹ **Stop Server Button** — one-click shutdown from the browser
@@ -265,8 +265,9 @@ See [`agent/memory/decisions.md`](agent/memory/decisions.md) for the full sync c
 | M26 — Schema Hardening | ✅ Completed | 4/4 |
 | M27 — CI & Quality Pipeline | ✅ Completed | 6/6 |
 | M28 — ACP Sync Contract | ✅ Completed | 5/5 |
+| M29-M38 — 10 more milestones | ✅ Completed | 92/92 |
 
-> **25 tests passing** · TypeScript strict · GitHub Actions CI · Zod validation · ACP Enhanced v6.8.2 compatible
+> **92 tests passing** · TypeScript strict · GitHub Actions CI · Zod validation · ACP Enhanced v6.9.1 compatible
 
 ---
 

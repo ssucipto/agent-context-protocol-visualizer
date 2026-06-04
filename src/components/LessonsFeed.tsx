@@ -36,6 +36,7 @@ export function LessonsFeed() {
 
   const totalMistakes = lessons.reduce((sum, l) => sum + (l.mistakes?.length || 0), 0);
   const highPriorities = lessons.reduce((sum, l) => sum + (l.mistakes?.filter(m => m.priority === 'high').length || 0), 0);
+  const mostCommon = lessons.length ? lessons.reduce((a, b) => (a.mistakes?.length || 0) > (b.mistakes?.length || 0) ? a : b).task_type : '—';
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -43,7 +44,7 @@ export function LessonsFeed() {
         { icon: '📝', label: 'Total Lessons', value: totalMistakes },
         { icon: '🔴', label: 'High Priority', value: highPriorities },
         { icon: '📂', label: 'Categories', value: lessons.length },
-        { icon: '📋', label: 'Most Common', value: lessons[0]?.task_type || '—' },
+        { icon: '📋', label: 'Most Common', value: mostCommon },
       ]} />
       <h1 className="text-lg font-semibold mb-4">Lessons Learned ({filtered.length} categories)</h1>
       <div className="flex flex-wrap gap-1 mb-2">

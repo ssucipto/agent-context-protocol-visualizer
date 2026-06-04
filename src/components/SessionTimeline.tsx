@@ -7,7 +7,7 @@ import Fuse from 'fuse.js';
 export function SessionTimeline() {
   const [sessions, setSessions] = useState<SessionEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -27,8 +27,8 @@ export function SessionTimeline() {
     </div>
   );
 
-  const toggle = (i: number) => {
-    setExpanded((prev) => { const next = new Set(prev); next.has(i) ? next.delete(i) : next.add(i); return next; });
+  const toggle = (key: string) => {
+    setExpanded((prev) => { const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next; });
   };
 
   const grouped = useMemo(() => {
@@ -79,17 +79,19 @@ export function SessionTimeline() {
             <div key={week}>
               <h2 className="text-xs font-semibold text-gray-400 uppercase mb-2">{week}</h2>
               <div className="space-y-2">
-                {weekSessions.map((s, i) => (
-                  <div key={i} className="border border-gray-200 rounded-lg overflow-hidden">
-                    <button onClick={() => toggle(i)}
+                {weekSessions.map((s) => {
+                  const key = `${s.date}-${s.executor}`;
+                  return (
+                  <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
+                    <button onClick={() => toggle(key)}
                       className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left">
-                      <span className="text-gray-400 text-xs">{expanded.has(i) ? '▼' : '▶'}</span>
+                      <span className="text-gray-400 text-xs">{expanded.has(key) ? '▼' : '▶'}</span>
                       <span className="font-mono text-xs text-gray-500">{s.date}</span>
                       <span className="text-sm text-gray-700">{s.executor}</span>
                       {s.key_fact && <span className="text-xs text-gray-400 italic truncate hidden sm:inline">— {s.key_fact.slice(0, 60)}</span>}
                       <span className="font-mono text-xs text-gray-400 ml-auto">{s.tasks_completed?.length || 0} tasks</span>
                     </button>
-                    {expanded.has(i) && (
+                    {expanded.has(key) && (
                       <div className="px-4 pb-3 pt-1 space-y-2 text-sm border-t border-gray-100">
                         {s.key_fact && (
                           <div>
@@ -114,7 +116,8 @@ export function SessionTimeline() {
                       </div>
                     )}
                   </div>
-                ))}
+                );
+                })}
               </div>
             </div>
           ))}

@@ -22,7 +22,16 @@ export function ADRBrowser() {
 
   const filtered = useMemo(() => {
     let list = filter === 'all' ? adrs : adrs.filter((a) => a.status === filter);
-    if (query.length >= 2) list = fuse.search(query).map(r => r.item).filter(a => list.includes(a));
+    if (query.length >= 2) {
+      const fuseResults = fuse.search(query).map(r => r.item);
+      // When status filter is active, intersect with status-filtered list by ID
+      if (filter !== 'all') {
+        const filteredIds = new Set(list.map(a => a.id));
+        list = fuseResults.filter(a => filteredIds.has(a.id));
+      } else {
+        list = fuseResults;
+      }
+    }
     return list;
   }, [adrs, filter, query, fuse]);
 

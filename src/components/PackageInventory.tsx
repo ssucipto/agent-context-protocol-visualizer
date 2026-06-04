@@ -68,7 +68,12 @@ export function PackageInventory() {
               <DepTable deps={filteredNpm.filter((d: any) => d.type === 'dev')} />
             </div>
           )}
-          {totalNpm === 0 && <div className="text-gray-400 text-sm">No npm dependencies found.</div>}
+          {(npmDeps.deps.length + npmDeps.devDeps.length) > 0 && filteredNpm.length === 0 && (
+            <div className="text-gray-400 text-sm text-center py-4">No packages match your search.</div>
+          )}
+          {npmDeps.deps.length === 0 && npmDeps.devDeps.length === 0 && (
+            <div className="text-gray-400 text-sm">No npm dependencies found.</div>
+          )}
         </div>
       ) : (
         acpPkgs.length === 0 ? (

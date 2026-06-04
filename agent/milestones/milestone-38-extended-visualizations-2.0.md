@@ -155,6 +155,7 @@ A small button/link that opens the source `.md` file in the DocsViewer at the re
 ### task-208: Tests
 
 - Minimum 2 component tests per enhanced view (12 total)
+- 1 server function parser test for new memory-files.ts fields (addresses audit-19-F2)
 - Test search/filter interactions (type → results update)
 - Test stat card calculations (correct counts)
 - Test empty states render with CTA
@@ -170,19 +171,22 @@ A small button/link that opens the source `.md` file in the DocsViewer at the re
 
 Create two reusable components:
 - `src/components/StatsRow.tsx` — horizontal stat cards (icon, label, value, optional trend). Supports 2-4 cards, responsive collapse.
-- `src/components/SourceLink.tsx` — button that links to DocsViewer at specific file + anchor. Parses file paths, generates `#anchor-id` from section title.
+- `src/components/SourceLink.tsx` — button that links to DocsViewer at specific file + anchor. Uses TanStack Router `navigate({ to: '/docs', search: { file: path } })`. Requires adding `?file=` query param support to the `/docs` route so DocsViewer auto-selects and scrolls-to-anchor.
 
 **Estimated**: 2h
 
+**Note**: StatsRow extracts and generalizes the existing stat card layout from `AggregateHome.tsx`. After creation, refactor AggregateHome to use StatsRow. SourceLink requires adding `?file=` query param support to DocsViewer (auto-select file + scroll to anchor on mount).
+
 ### task-200: Server function enhancements
 
-Add missing data fields to server functions in `server/routes/api/memory-files.ts`:
+Add missing data fields to server functions in `server/routes/api/memory-files.ts` and `server/routes/api/package-json.ts`:
 - SessionEntry: parse `key_fact`, `duration`, `start_time`/`end_time` if available
 - ADREntry: parse `consequences`, `date` fields
 - LessonEntry: parse `date` per mistake entry, deduplicate for frequency count
 - PatternEntry: parse `tags`/`categories`, `usage_count`
 - AuditEntry: parse `status` (open/resolved) from report metadata
 - PackageEntry: add `license` field parsing
+- **NpmDependency**: add `wanted: string` and `latest: string` fields via `npm outdated --json` integration in `fetchPackageJson()`
 
 **Estimated**: 1.5h
 
@@ -294,14 +298,18 @@ agent/reports/audit-*.md  ──→  fetchAudits()     ──→  AuditIndex
 - `src/components/SourceLink.tsx`
 
 ### Modified files
-- `server/routes/api/memory-files.ts` — enhanced data fields
-- `src/components/SessionTimeline.tsx` — full rewrite
-- `src/components/ADRBrowser.tsx` — full rewrite
-- `src/components/LessonsFeed.tsx` — full rewrite
-- `src/components/PatternLibrary.tsx` — full rewrite
-- `src/components/PackageInventory.tsx` — full rewrite
-- `src/components/AuditIndex.tsx` — full rewrite
-- `src/styles.css` — skeleton + dark mode additions
+- `server/routes/api/memory-files.ts` — enhanced data fields (task-200)
+- `server/routes/api/package-json.ts` — NpmDependency wanted/latest (task-200)
+- `src/components/AggregateHome.tsx` — refactor to use StatsRow (task-199)
+- `src/routes/docs.tsx` — add `?file=` query param support (task-199)
+- `src/components/DocsViewer.tsx` — auto-select file + scroll to anchor (task-199)
+- `src/components/SessionTimeline.tsx` — full rewrite (task-201)
+- `src/components/ADRBrowser.tsx` — full rewrite (task-202)
+- `src/components/LessonsFeed.tsx` — full rewrite (task-203)
+- `src/components/PatternLibrary.tsx` — full rewrite (task-204)
+- `src/components/PackageInventory.tsx` — full rewrite (task-205)
+- `src/components/AuditIndex.tsx` — full rewrite (task-206)
+- `src/styles.css` — skeleton + dark mode additions (task-207)
 
 ### New test files
 - `test/components/stats-row.test.tsx`
@@ -324,4 +332,6 @@ agent/reports/audit-*.md  ──→  fetchAudits()     ──→  AuditIndex
 - [ ] Print: content visible, sidebars hidden
 - [ ] All 86 existing tests pass
 - [ ] ~15 new component tests pass
+- [ ] 1 new server function parser test passes
 - [ ] TypeScript compiles with zero errors
+- [ ] Version bumped to 1.6.0 on completion (package.json + CHANGELOG)

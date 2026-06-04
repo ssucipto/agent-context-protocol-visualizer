@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommandReference } from '../../src/components/CommandReference';
-import type { CommandMeta } from '../../server/routes/api/commands';
+import type { CommandMeta } from '../../server/routes/api/command-types';
 
 const MOCK_COMMANDS: CommandMeta[] = [
   {

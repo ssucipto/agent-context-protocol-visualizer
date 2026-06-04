@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { CommandMeta } from '../../server/routes/api/commands';
+import type { CommandMeta } from '../../server/routes/api/command-types';
 
 const NS_COLORS: Record<string, string> = {
   acp: 'bg-purple-100 text-purple-800',

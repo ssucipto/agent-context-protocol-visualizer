@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { CommandReference } from '../components/CommandReference';
 import { fetchCommands } from '../../server/routes/api/commands';
-import type { CommandMeta } from '../../server/routes/api/commands';
+import type { CommandMeta } from '../../server/routes/api/command-types';
 
 export const Route = createFileRoute('/commands')({ component: CommandsPage });
 

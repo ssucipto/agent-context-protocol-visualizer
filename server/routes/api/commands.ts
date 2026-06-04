@@ -1,17 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
-
-export interface CommandMeta {
-  name: string;
-  namespace: string;
-  version: string;
-  status: string;
-  purpose: string;
-  category: string;
-  frequency: string;
-  scripts: string | null;
-  /** CLI flags extracted from Arguments section */
-  flags: string[];
-}
+import type { CommandMeta } from './command-types';
 
 /** 19 raw ACP categories → 6 display groups */
 const CATEGORY_MAP: Record<string, string> = {

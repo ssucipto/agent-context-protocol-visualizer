@@ -179,6 +179,39 @@ milestones:
       10 component tests (DocsViewer, MaintenancePage, ServerControls),
       path traversal security tests. 28 new tests total (43 → 71).
 
+  M36:
+    name: ACP Command Reference (User Manual)
+    priority: 2
+    status: completed
+    progress: 100
+    started: 2026-06-04
+    completed: 2026-06-04
+    estimated_weeks: '0.5'
+    tasks_completed: 4
+    tasks_total: 4
+    file: agent/milestones/milestone-36-acp-command-reference.md
+    notes: |
+      Searchable /commands route as user manual. Parse 66 agent/commands/*.md
+      files + 4 hardcoded visualizer commands. Namespace badges (acp/git/visualizer),
+      category filter (19→6 groups), expandable rows with version/status/flags.
+
+  M37:
+    name: Collapsible Sidebar & Markdown Viewer 2.0
+    priority: 2
+    status: completed
+    progress: 100
+    started: 2026-06-04
+    completed: 2026-06-04
+    estimated_weeks: '1'
+    tasks_completed: 7
+    tasks_total: 7
+    file: agent/milestones/milestone-37-sidebar-markdown-viewer.md
+    notes: |
+      Sidebar collapse toggle (w-14/w-48) with localStorage. DocsViewer 2.0:
+      lowlight syntax highlighting, heading anchors, code copy buttons, TOC with
+      IntersectionObserver, drag-and-drop, dark/light theme, font size, fullscreen,
+      image lightbox. Audit fixed 3 gaps (fullscreen, lightbox, tests).
+
 tasks:
   M25:
     - id: task-137
@@ -683,7 +716,150 @@ tasks:
       completed_date: 2026-06-03T02:40:00Z
       notes: beforeunload sendBeacon in __root.tsx. find-port.mjs reports PID+process.
 
+  M36:
+    - id: task-188
+      name: Command metadata parser
+      priority: 1
+      status: completed
+      started: 2026-06-04T00:00:00Z
+      file: agent/tasks/milestone-36-acp-command-reference/task-188-command-parser.md
+      estimated_hours: '1.5'
+      actual_hours: 0.8
+      completed_date: 2026-06-04T00:45:00Z
+      notes: server/routes/api/commands.ts — parse 66 .md files + 4 visualizer commands
+
+    - id: task-189
+      name: CommandReference component
+      priority: 1
+      status: completed
+      started: 2026-06-04T00:00:00Z
+      file: agent/tasks/milestone-36-acp-command-reference/task-189-command-reference-component.md
+      estimated_hours: '1.5'
+      actual_hours: 0.8
+      completed_date: 2026-06-04T00:45:00Z
+      notes: Searchable/filterable table with namespace badges and expandable rows
+
+    - id: task-190
+      name: /commands route
+      priority: 2
+      status: completed
+      started: 2026-06-04T00:00:00Z
+      file: agent/tasks/milestone-36-acp-command-reference/task-190-commands-route.md
+      estimated_hours: '0.5'
+      actual_hours: 0.2
+      completed_date: 2026-06-04T00:45:00Z
+      notes: src/routes/commands.tsx + "📖 Reference" sidebar section
+
+    - id: task-191
+      name: Integration + tests
+      priority: 2
+      status: completed
+      started: 2026-06-04T00:00:00Z
+      file: agent/tasks/milestone-36-acp-command-reference/task-191-integration-tests.md
+      estimated_hours: '1'
+      actual_hours: 0.5
+      completed_date: 2026-06-04T01:00:00Z
+      notes: 11 CommandReference component tests + 4 parser unit tests
+
+  M37:
+    - id: task-192
+      name: Collapsible sidebar
+      priority: 1
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-192-collapsible-sidebar.md
+      estimated_hours: '1'
+      actual_hours: 0.5
+      completed_date: 2026-06-04T01:15:00Z
+      notes: Toggle w-14/w-48 in __root.tsx, icon-only mode, localStorage, 200ms transition
+
+    - id: task-193
+      name: Markdown core upgrade
+      priority: 1
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-193-markdown-core.md
+      estimated_hours: '1'
+      actual_hours: 0.8
+      completed_date: 2026-06-04T01:15:00Z
+      notes: lowlight + hast-util-to-html, GFM tables/task-lists, dark mode prose-invert
+
+    - id: task-194
+      name: Table of contents + anchor links
+      priority: 1
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-194-toc-anchors.md
+      estimated_hours: '1'
+      actual_hours: 0.5
+      completed_date: 2026-06-04T01:15:00Z
+      notes: Floating TOC sidebar, IntersectionObserver scroll tracking, heading # anchors
+
+    - id: task-195
+      name: Code block enhancements
+      priority: 2
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-195-code-blocks.md
+      estimated_hours: '0.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-04T01:15:00Z
+      notes: Language badge + copy-to-clipboard button with "Copied!" feedback
+
+    - id: task-196
+      name: Drag-and-drop + document controls
+      priority: 2
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-196-drag-drop-controls.md
+      estimated_hours: '1'
+      actual_hours: 0.8
+      completed_date: 2026-06-04T01:30:00Z
+      notes: FileReader drop zone, dark/light toggle, font size S/M/L, fullscreen, back-to-top
+
+    - id: task-197
+      name: Visual polish + responsive
+      priority: 3
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-197-visual-polish.md
+      estimated_hours: '0.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-04T01:30:00Z
+      notes: Blockquotes, image lightbox, print styles, responsive TOC collapse
+
+    - id: task-198
+      name: Tests
+      priority: 2
+      status: completed
+      started: 2026-06-04T00:45:00Z
+      file: agent/tasks/milestone-37-sidebar-markdown-viewer/task-198-tests.md
+      estimated_hours: '0.5'
+      actual_hours: 0.3
+      completed_date: 2026-06-04T01:30:00Z
+      notes: 4 DocsViewer component tests with IntersectionObserver mock
+
 recent_work:
+  - date: 2026-06-04
+    description: |
+      📖 M36 ACP Command Reference + M37 Collapsible Sidebar & Markdown Viewer 2.0
+      — both milestones completed. /commands route with 70-command searchable
+      reference table. Sidebar collapse toggle (w-14/w-48). DocsViewer 2.0 with
+      lowlight syntax highlighting, heading anchors, code copy buttons, TOC with
+      IntersectionObserver, drag-and-drop, dark/light theme, fullscreen, image
+      lightbox. Audit found 3 gaps (fullscreen, lightbox, tests) — all fixed.
+      86 tests passing across 13 test files.
+    items:
+      - "📖 M36: /commands route — 66 .md files + 4 visualizer, namespace badges, category filter"
+      - "📋 M36: CommandReference component — searchable table, expandable rows with flags"
+      - "🧪 M36: 15 new tests (11 component + 4 parser unit)"
+      - "📐 M37: Collapsible sidebar — toggle button, icon-only mode, localStorage, 200ms transition"
+      - "📝 M37: DocsViewer 2.0 — lowlight highlighting, heading anchors, copy buttons, TOC"
+      - "🖱️ M37: Drag-and-drop .md files, dark/light theme, font size S/M/L, fullscreen, lightbox"
+      - "🎨 M37: Blockquotes, print styles, responsive TOC, prose-invert dark mode"
+      - "🔍 Audit: 3 gaps found (fullscreen, lightbox, tests) → all fixed"
+      - "✅ 86 tests passing, 13 test files, dev server clean, pushed to main"
+      - "✓ No artifacts — all templates, skip staleness check"
   - date: 2026-06-04
     description: |
       🐛 Fixed Node SIGABRT crash with external projects (FIFOZ). The residual
@@ -831,28 +1007,29 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🔵 npm publish — ship v1.5.0 to npm registry"
+  - "🔵 npm publish — ship v1.5.1 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
-  - "🔵 Split vitest environments — Node for CLI/YAML, jsdom for components"
-  - "Maintenance: monitor ACP Enhanced schema changes"
+  - "📋 Plan M38 — next feature milestone (user feedback driven)"
 
 notes:
-  - 🎉 11 MILESTONES COMPLETE (M25-M35) — 76 tasks across 11 milestones
-  - 71 tests passing across 11 test files
+  - 🎉 13 MILESTONES COMPLETE (M25-M37) — 87 tasks across 13 milestones
+  - 86 tests passing across 13 test files
   - Coverage reporting enabled via npm run test:coverage
-  - ACP Enhanced v6.8.2 framework installed
+  - ACP Enhanced v6.9.1 framework installed
   - GitHub Actions CI: lint + test + build on push/PR
   - 21 audit reports, all findings resolved
   - npx acp-visualizer CLI ready for npm publish
-  - 16 routes across Dashboard, Intelligence, Tools, Management sections
-  - 20+ components — ErrorCard, StatusBadge (6 colors), ClientOnly wrapper
+  - 17 routes across Dashboard, Intelligence, Tools, Reference, Management sections
+  - 25+ components — ErrorCard, StatusBadge (6 colors), ClientOnly, CommandReference, DocsViewer
   - React 19 SSR fix: devtools wrapped in ClientOnly (useSyncExternalStore)
   - YAML error UX: ErrorCard with smart formatParseError for YAMLException
   - Multi-project normalization: milestones array→record, status mapping, summary→description
   - Schema supports 'blocked' status project-wide (schemas, types, UI components)
-  - Collapsible sidebar with localStorage persistence
+  - Collapsible sidebar with localStorage persistence (w-14/w-48)
+  - DocsViewer 2.0: lowlight highlighting, TOC, drag-drop, dark mode, fullscreen, lightbox
+  - /commands: 70-command searchable reference table with namespace badges
   - Dual data source: local filesystem + GitHub remote
   - Path traversal protection on all file-reading server functions
 

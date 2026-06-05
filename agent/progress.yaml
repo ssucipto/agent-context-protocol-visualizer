@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.2
   started: 2026-06-03
-  status: completed
-  current_milestone: null
+  status: active
+  current_milestone: M39
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -229,6 +229,23 @@ milestones:
       StatsRow + SourceLink components. Per-view: fuse.js search, filters,
       empty state CTAs, loading skeletons. 2 infrastructure tasks + 6 view
       upgrades + polish + tests.
+
+  M39:
+    name: Mermaid Flowcharts + Document Export
+    priority: 2
+    status: planned
+    progress: 0
+    started: null
+    completed: null
+    estimated_weeks: '1'
+    tasks_completed: 0
+    tasks_total: 8
+    file: agent/milestones/milestone-39-mermaid-flowcharts-doc-export.md
+    notes: |
+      Fix Mermaid rendering pipeline (race condition, securityLevel),
+      add interactive zoom/pan/copy/download for diagrams, one-click export
+      to Word (.doc) with embedded SVGs, PDF via print with @media print CSS.
+      8 tasks: 2 mermaid + 2 export + pre-impl audit + implementation.
 
 tasks:
   M25:
@@ -968,6 +985,71 @@ tasks:
       completed_date: 2026-06-05T00:01:00Z
       notes: 6 new tests (5 StatsRow + 1 server fn) — 92 total, 15 test files
 
+  M39:
+    - id: task-209
+      name: Fix Mermaid rendering pipeline
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-209-fix-mermaid-pipeline.md
+      estimated_hours: '1.5'
+      notes: Fix regex ordering, change securityLevel to loose, MutationObserver, retry, loading/error fallbacks
+
+    - id: task-210
+      name: Mermaid interactive UX
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-210-mermaid-ux.md
+      estimated_hours: '1.5'
+      notes: Click-to-zoom, pan, copy source, download SVG, dark mode, responsive scaling
+
+    - id: task-211
+      name: Export to Word (.doc)
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-211-export-word.md
+      estimated_hours: '1.5'
+      notes: Clone DOM, strip UI chrome, embed SVGs, Blob download with application/msword MIME
+
+    - id: task-212
+      name: Export to PDF
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-212-export-pdf.md
+      estimated_hours: '1'
+      notes: window.print() with enhanced @media print CSS, SVG preservation, page breaks
+
+    - id: task-213
+      name: Export + mermaid tests
+      priority: 2
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-213-tests.md
+      estimated_hours: '1'
+      notes: Mermaid rendering, fallback, Word export Blob, print CSS rules
+
+    - id: task-214
+      name: Export visual polish
+      priority: 3
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-214-export-polish.md
+      estimated_hours: '0.5'
+      notes: Floating export buttons, loading spinner, toast notification, keyboard shortcut
+
+    - id: task-215
+      name: Pre-implementation audit
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-215-pre-impl-audit.md
+      estimated_hours: '0.5'
+      notes: Verify Mermaid API, SVG-to-Word compatibility, print CSS coverage
+
+    - id: task-216
+      name: Implementation
+      priority: 1
+      status: planned
+      file: agent/tasks/milestone-39-mermaid-flowcharts-doc-export/task-216-implementation.md
+      estimated_hours: '6'
+      notes: Execute tasks 209-214 via autonomous mode
+
 recent_work:
   - date: 2026-06-05
     description: |
@@ -1204,7 +1286,8 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "🔵 npm publish — ship v1.6.0 to npm registry"
+  - "� M39: Mermaid Flowcharts + Document Export — 8 tasks planned, 1-week estimate"
+  - "�🔵 npm publish — ship v1.6.0 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
@@ -1217,6 +1300,7 @@ next_steps:
 
 notes:
   - 🎉 14 MILESTONES COMPLETE (M25-M38) — 97 tasks across 14 milestones
+  - 🟢 M39 PLANNED: Mermaid Flowcharts + Document Export (8 tasks, 1-week estimate)
   - 92 tests passing across 15 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed

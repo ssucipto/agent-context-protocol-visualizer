@@ -261,8 +261,8 @@ export function DocsViewer() {
     setExporting(true);
     try {
       const clone = el.cloneNode(true) as HTMLElement;
-      // Remove UI elements
-      clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span').forEach(e => e.remove());
+      // Remove UI elements (keep mermaid error text for diagnostics)
+      clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span:first-child').forEach(e => e.remove());
 
       // Fix mermaid containers for Word export
       clone.querySelectorAll('.mermaid-container').forEach(container => {
@@ -308,7 +308,9 @@ export function DocsViewer() {
       </style></head><body>${clone.innerHTML}</body></html>`;
       const blob = new Blob([html], { type: 'application/msword' });
       const name = selectedPath?.split('/').pop()?.replace(/\.md$/, '') || 'document';
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}.doc`; a.click();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `${name}.doc`; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast(`✅ Exported as ${name}.doc`);
     } catch { showToast('⚠️ Export failed'); }
     finally { setExporting(false); }

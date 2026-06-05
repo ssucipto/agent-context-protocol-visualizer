@@ -145,7 +145,8 @@ export function DocsViewer() {
           block.innerHTML = svg;
           block.setAttribute('data-processed', 'true');
           const svgEl = block.querySelector('svg');
-          if (svgEl) {
+          if (svgEl && !svgEl.hasAttribute('data-zoom-bound')) {
+            svgEl.setAttribute('data-zoom-bound', 'true');
             svgEl.style.cursor = 'pointer';
             svgEl.setAttribute('title', 'Click to zoom');
             svgEl.addEventListener('click', () => setMermaidZoom(svgEl.outerHTML));
@@ -170,11 +171,11 @@ export function DocsViewer() {
 
   useEffect(() => {
     if (!html) return;
+    let t: ReturnType<typeof setTimeout>;
     const raf = requestAnimationFrame(() => {
-      const t = setTimeout(renderMermaid, 0);
-      return () => clearTimeout(t);
+      t = setTimeout(renderMermaid, 0);
     });
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); if (t!) clearTimeout(t); };
   }, [html, renderMermaid]);
 
   // Drag-and-drop

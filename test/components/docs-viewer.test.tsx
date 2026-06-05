@@ -30,12 +30,21 @@ vi.mock('../../server/routes/api/docs', () => ({
 }));
 
 // Mock mermaid
+const mockMermaidRender = vi.fn().mockResolvedValue({ svg: '<svg>mock</svg>' });
 vi.mock('mermaid', () => ({
   default: {
     initialize: vi.fn(),
-    render: vi.fn().mockResolvedValue({ svg: '<svg>mock</svg>' }),
+    render: mockMermaidRender,
   },
 }));
+
+// Mock window.print
+const mockPrint = vi.fn();
+vi.stubGlobal('print', mockPrint);
+
+// Mock URL.createObjectURL
+const mockCreateObjectURL = vi.fn(() => 'blob:mock');
+vi.stubGlobal('URL', { ...URL, createObjectURL: mockCreateObjectURL });
 
 import { DocsViewer } from '../../src/components/DocsViewer';
 
@@ -84,5 +93,69 @@ describe('DocsViewer component', () => {
     // Table should be wrapped in .table-wrapper
     expect(await screen.findByText('Col1')).toBeInTheDocument();
     expect(screen.getByText('Col2')).toBeInTheDocument();
+  });
+
+  it('renders mermaid diagrams after content loads', async () => {
+    const user = userEvent.setup();
+    render(<DocsViewer />);
+
+    const readmeBtn = await screen.findByText('README');
+    await user.click(readmeBtn);
+
+    // Mermaid should be called to render the diagram
+    await vi.waitFor(() => {
+      expect(mockMermaidRender).toHaveBeenCalled();
+    });
+  });
+
+  it('shows mermaid loading state briefly', async () => {
+    // Make mermaid render take a moment
+    mockMermaidRender.mockImplementationOnce(() =>
+      new Promise(r => setTimeout(() => r({ svg: '<svg>delayed</svg>' }), 100))
+    );
+
+    const user = userEvent.setup();
+    render(<DocsViewer />);
+    const readmeBtn = await screen.findByText('README');
+    await user.click(readmeBtn);
+
+    // Loading indicator should appear
+    expect(await screen.findByText('🔄 Rendering diagram…')).toBeInTheDocument();
+  });
+
+  it('shows mermaid error fallback on render failure', async () => {
+    mockMermaidRender.mockRejectedValueOnce(new Error('Parse error'));
+
+    const user = userEvent.setup();
+    render(<DocsViewer />);
+    const readmeBtn = await screen.findByText('README');
+    await user.click(readmeBtn);
+
+    expect(await screen.findByText(/Diagram rendering failed/)).toBeInTheDocument();
+  });
+
+  it('shows export buttons when document selected', async () => {
+    const user = userEvent.setup();
+    render(<DocsViewer />);
+
+    const readmeBtn = await screen.findByText('README');
+    await user.click(readmeBtn);
+
+    // Export buttons should appear
+    expect(await screen.findByTitle('Export to Word')).toBeInTheDocument();
+    expect(screen.getByTitle('Export to PDF')).toBeInTheDocument();
+  });
+
+  it('triggers print on PDF export click', async () => {
+    const user = userEvent.setup();
+    render(<DocsViewer />);
+
+    const readmeBtn = await screen.findByText('README');
+    await user.click(readmeBtn);
+
+    const pdfBtn = await screen.findByTitle('Export to PDF');
+    await user.click(pdfBtn);
+
+    expect(mockPrint).toHaveBeenCalled();
   });
 });

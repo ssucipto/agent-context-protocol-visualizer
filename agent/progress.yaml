@@ -2,8 +2,8 @@ project:
   name: ACPEnhanced-Visual
   version: 1.5.2
   started: 2026-06-03
-  status: active
-  current_milestone: M39
+  status: completed
+  current_milestone: null
   description: >
     Web dashboard that renders ACP Enhanced's agent/progress.yaml into an
     interactive, sortable, searchable UI with milestone tables, task trees,
@@ -233,12 +233,12 @@ milestones:
   M39:
     name: Mermaid Flowcharts + Document Export
     priority: 2
-    status: planned
-    progress: 0
-    started: null
-    completed: null
+    status: completed
+    progress: 100
+    started: 2026-06-05
+    completed: 2026-06-05
     estimated_weeks: '1'
-    tasks_completed: 0
+    tasks_completed: 8
     tasks_total: 8
     file: agent/milestones/milestone-39-mermaid-flowcharts-doc-export.md
     notes: |
@@ -1286,12 +1286,10 @@ recent_work:
       - "⚠️ ACP Enhanced fixture has YAML error at M5:148 — sync test handles gracefully"
 
 next_steps:
-  - "� M39: Mermaid Flowcharts + Document Export — 8 tasks planned, 1-week estimate"
   - "�🔵 npm publish — ship v1.6.0 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
   - "🔵 Accessibility audit — axe-core on all pages"
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
-  - "📋 Plan M39 — next feature milestone"
   - "� M38: Extended Visualizations 2.0 — 10 tasks planned, 2-week estimate"
   - "🔵 npm publish — ship v1.5.1 to npm registry"
   - "🔵 Add E2E tests — Playwright full browser flow"
@@ -1299,8 +1297,7 @@ next_steps:
   - "🔵 Add visual regression tests — screenshot diffs for dashboard pages"
 
 notes:
-  - 🎉 14 MILESTONES COMPLETE (M25-M38) — 97 tasks across 14 milestones
-  - 🟢 M39 PLANNED: Mermaid Flowcharts + Document Export (8 tasks, 1-week estimate)
+  - 🎉 15 MILESTONES COMPLETE (M25-M39) — 105 tasks across 15 milestones
   - 92 tests passing across 15 test files
   - Coverage reporting enabled via npm run test:coverage
   - ACP Enhanced v6.9.1 framework installed

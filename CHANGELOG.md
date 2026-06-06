@@ -54,6 +54,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   warning.
 - **CSS Regression (M39)**: Mermaid SVGs at 60% opacity fixed with
   `:not(:has(svg))` selector.
+- **Export Reliability**: svgToPngDataUri() now styles root SVG element
+  plus all descendants (13 CSS properties). Blank canvas detection
+  prevents embedding empty images. XML declaration added to serialized
+  SVG for standalone validity.
+- **Export Fallback**: `data-mermaid-src` attribute used instead of
+  `pre.textContent` for fallback diagram source — prevents CSS text
+  from appearing in exported documents when rasterization fails.
+- **Live Viewer Preservation**: React `dangerouslySetInnerHTML` object
+  now memoized via `useMemo` — prevents re-render from destroying
+  rendered mermaid SVGs when export state changes.
+- **Clone SVG Style Loss**: Export functions now query live DOM SVGs
+  for `getComputedStyle()` instead of detached clone SVGs — fixes
+  blank PNGs in exported documents.
 
 ### Changed
 

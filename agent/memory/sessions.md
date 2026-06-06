@@ -21,6 +21,7 @@
     - audit-31-m40-post-impl-fixes
     - audit-32-feedback-004-cross-ref
     - audit-33-m40-comprehensive
+    - audit-34-mermaid-png-export-reliability
   done:
     - canvas-svg-to-png-with-css-inlining-10-properties
     - word-export-png-replaces-svg-base64-unsupported-in-word
@@ -41,6 +42,12 @@
     - progress-yaml-m40-tasks-completed-dates
     - readme-sync-version-1-5-3-milestones-16-tests-110
     - package-json-version-1-5-3
+    - svg-to-png-root-element-styling-included
+    - svg-to-png-13-css-props-fill-stroke-opacity
+    - svg-to-png-blank-canvas-detection-getimagedata
+    - svg-to-png-xml-declaration-blob-type-fixed
+    - changelog-1-5-3-entry-added
+    - session-committed-9-entries
   deferred:
     - remaining-8-server-function-tests
     - playwright-e2e-tests

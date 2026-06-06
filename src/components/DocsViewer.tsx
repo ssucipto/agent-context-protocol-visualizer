@@ -283,7 +283,7 @@ export function DocsViewer() {
             // No SVG rendered — show source code
             const pre = container.querySelector('pre.mermaid');
             if (pre) {
-              const code = pre.textContent || '';
+              const code = pre.getAttribute('data-mermaid-src') || pre.textContent || '';
               const codeBlock = document.createElement('pre');
               codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
               codeBlock.textContent = code;
@@ -308,7 +308,7 @@ export function DocsViewer() {
           } else {
             // Rasterization failed — show source code
             if (pre) {
-              const code = pre.textContent || '';
+              const code = pre.getAttribute('data-mermaid-src') || pre.textContent || '';
               const codeBlock = document.createElement('pre');
               codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
               codeBlock.textContent = code;

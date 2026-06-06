@@ -1,9 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 
-// Test the internal path sanitization logic directly
-// (fetchProgress server function can't be called directly in Vitest —
-//  it requires TanStack Start's server function HTTP protocol)
+// NOTE: This file tests the path sanitization LOGIC, not the actual
+// fetchProgress server function. TanStack Start server functions
+// (createServerFn) require the SSR HTTP protocol and cannot be called
+// directly in Vitest. The real sanitizePath() in progress.ts is internal
+// (not exported). For full integration testing, use TanStack Start's
+// e2e test utilities or test via HTTP.
+
+/** Duplicate of progress.ts's sanitizePath logic for unit testing */
 
 function sanitizePath(input: string, projectRoot: string): string {
   const base = resolve(projectRoot);

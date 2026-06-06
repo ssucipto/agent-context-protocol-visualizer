@@ -275,6 +275,9 @@ export function DocsViewer() {
       const containers = clone.querySelectorAll<HTMLElement>('.mermaid-container');
       if (containers.length) {
         const conversions = Array.from(containers).map(async (container) => {
+          (container as HTMLElement).style.background = 'transparent';
+          (container as HTMLElement).style.border = '1px solid #d1d5db';
+
           const svg = container.querySelector('svg');
           if (!svg) {
             // No SVG rendered — show source code
@@ -312,8 +315,6 @@ export function DocsViewer() {
               pre.replaceWith(codeBlock);
             }
           }
-          (container as HTMLElement).style.background = 'transparent';
-          (container as HTMLElement).style.border = '1px solid #d1d5db';
         });
         await Promise.allSettled(conversions);
       }
@@ -421,7 +422,7 @@ export function DocsViewer() {
         </div>
         {[...grouped.entries()].map(([dir, dirFiles]) => (
           <div key={dir}>
-            <div className={`px-3 py-1.5 text-xs font-semibold uppercase ${dark ? 'text-gray-500 bg-gray-700' : 'text-gray-400 bg-gray-100'}`}>
+            <div className={`px-3 py-1.5 text-xs font-semibold uppercase ${dark ? 'text-gray-500 bg-gray-800' : 'text-gray-400 bg-gray-100'}`}>
               {dir} ({dirFiles.length})
             </div>
             {dirFiles.map((f) => (

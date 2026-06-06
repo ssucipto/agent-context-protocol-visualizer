@@ -67,6 +67,9 @@ export class ErrorBoundary extends Component<Props, State> {
               >
                 Reload page
               </button>
+              {/* Intentional <a href> (not <Link>) — full page reload clears the error
+                  state and re-initializes the app cleanly. SPA navigation would
+                  preserve the errored component tree in memory. */}
               <a
                 href="/"
                 className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium"

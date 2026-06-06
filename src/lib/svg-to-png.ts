@@ -32,9 +32,9 @@ export async function svgToPngDataUri(
       const computed = window.getComputedStyle(orig);
       const styles: string[] = [];
 
-      // Inline key presentation attributes
+      // Inline key presentation attributes — mermaid uses these for text positioning
       for (const prop of ['fill', 'stroke', 'stroke-width', 'font-family',
-        'font-size', 'font-weight', 'opacity']) {
+        'font-size', 'font-weight', 'opacity', 'text-anchor', 'dominant-baseline', 'color']) {
         const val = computed.getPropertyValue(prop);
         if (val && val !== 'normal' && val !== 'auto' && val !== 'rgba(0, 0, 0, 0)') {
           styles.push(`${prop}:${val}`);

@@ -95,14 +95,9 @@ export async function svgToPngDataUri(
 
         URL.revokeObjectURL(url);
 
-        // Detect blank canvas (image didn't render)
-        const imageData = ctx.getImageData(0, 0, 1, 1);
-        const isBlank = imageData.data[0] === 255 && imageData.data[1] === 255 &&
-          imageData.data[2] === 255 && imageData.data[3] === 255;
-
-        if (isBlank) {
-          // Try once more without style inlining in case styles broke rendering
-          console.warn('[svgToPng] blank canvas detected — possible style conflict');
+        // Sanity check: Image must have loaded with actual content
+        if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+          console.warn('[svgToPng] image loaded but has zero dimensions');
           resolve(null);
         } else {
           resolve(canvas.toDataURL('image/png'));

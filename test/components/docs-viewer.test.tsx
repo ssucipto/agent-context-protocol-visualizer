@@ -38,10 +38,6 @@ vi.mock('mermaid', () => ({
   },
 }));
 
-// Mock window.print
-const mockPrint = vi.fn();
-vi.stubGlobal('print', mockPrint);
-
 // Mock URL.createObjectURL
 const mockCreateObjectURL = vi.fn(() => 'blob:mock');
 vi.stubGlobal('URL', { ...URL, createObjectURL: mockCreateObjectURL });
@@ -148,6 +144,8 @@ describe('DocsViewer component', () => {
 
   it('triggers print on PDF export click', async () => {
     const user = userEvent.setup();
+    const mockPrintWindow = { document: { write: vi.fn(), close: vi.fn(), title: '' }, focus: vi.fn(), print: vi.fn(), close: vi.fn() };
+    vi.stubGlobal('open', vi.fn().mockReturnValue(mockPrintWindow));
     render(<DocsViewer />);
 
     const readmeBtn = await screen.findByText('README');
@@ -156,6 +154,6 @@ describe('DocsViewer component', () => {
     const pdfBtn = await screen.findByTitle('Export to PDF');
     await user.click(pdfBtn);
 
-    expect(mockPrint).toHaveBeenCalled();
+    expect(mockPrintWindow.print).toHaveBeenCalled();
   });
 });

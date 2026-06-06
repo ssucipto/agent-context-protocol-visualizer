@@ -19,3 +19,4 @@ dist/
 # User project config — contains local paths
 .visualizer-projects.json
 
+coverage/

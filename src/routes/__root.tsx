@@ -7,6 +7,7 @@ import { SearchBar } from '../components/SearchBar'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { TabBar } from '../components/TabBar'
 import { StopServerButton, ServerInfoDisplay } from '../components/ServerControls'
+import { ErrorBoundary } from '../components/ErrorBoundary'
 import { loadProjectConfigs, saveProjectConfigs } from '../../server/routes/api/projects-config'
 import type { ProjectConfig } from '../lib/projects'
 
@@ -212,6 +213,7 @@ function RootLayout() {
   }, []);
 
   return (
+    <ErrorBoundary>
     <div className="flex h-screen overflow-hidden font-sans">
       {/* Sidebar */}
       <aside className={`shrink-0 bg-gray-900 text-gray-100 flex flex-col transition-all duration-200 ${sidebarCollapsed ? 'w-14' : 'w-48'}`}>
@@ -275,6 +277,7 @@ function RootLayout() {
         </main>
       </div>
     </div>
+    </ErrorBoundary>
   )
 }
 

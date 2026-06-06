@@ -224,10 +224,11 @@ body {
   .prose-doc { padding-right: 0; }
 }
 @media print {
-  * { color-adjust: exact; -webkit-print-color-adjust: exact; }
+  * { print-color-adjust: exact; -webkit-print-color-adjust: exact; color-adjust: exact; }
   .prose-doc { color: #000; }
   .prose-doc pre { border: 1px solid #ccc; background: #f9f9f9; color: #000; }
   aside, nav, .fixed { display: none !important; }
+  html, body, main, .flex-1 { overflow: visible !important; height: auto !important; }
   main { overflow: visible !important; }
   .prose-doc .mermaid-container svg { max-width: 100%; page-break-inside: avoid; }
   .prose-doc h1 { page-break-before: always; }

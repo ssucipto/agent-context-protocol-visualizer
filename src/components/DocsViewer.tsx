@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { marked } from 'marked';
 import type { DocFile } from '../../server/routes/api/docs';
 import { listDocs, readDoc } from '../../server/routes/api/docs';
+import { svgToPngDataUri } from '../lib/svg-to-png';
 
 // ── Markdown rendering ────────────────────────────────────────────────────
 
@@ -64,6 +65,7 @@ export function DocsViewer() {
   const [toast, setToast] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const mermaidRetryRef = useRef(0);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     listDocs().then((r) => { setFiles(r.files); setLoading(false); });
@@ -253,49 +255,68 @@ export function DocsViewer() {
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(null), 3000);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(null), 3000);
   }, []);
 
-  const exportWord = useCallback(() => {
+  // Cleanup toast timer on unmount
+  useEffect(() => {
+    return () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); };
+  }, []);
+
+  const exportWord = useCallback(async () => {
     const el = contentRef.current; if (!el) return;
     setExporting(true);
     try {
       const clone = el.cloneNode(true) as HTMLElement;
-      // Remove UI elements (keep mermaid error text for diagnostics)
       clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span:first-child').forEach(e => e.remove());
 
-      // Fix mermaid containers for Word export
-      clone.querySelectorAll('.mermaid-container').forEach(container => {
-        const svg = container.querySelector('svg');
-        if (svg) {
-          // SVG rendered — clean up for Word compatibility
-          // Strip only our zoom handler attributes; keep mermaid's own styles
-          svg.removeAttribute('title');
-          svg.removeAttribute('data-zoom-bound');
-          // Remove cursor:pointer (mermaid SVGs don't set it, we do)
-          if (svg.style.cursor === 'pointer') svg.style.cursor = '';
+      // Convert mermaid SVGs to PNG images (Word doesn't support inline SVG or SVG data URIs)
+      const containers = clone.querySelectorAll<HTMLElement>('.mermaid-container');
+      if (containers.length) {
+        const conversions = Array.from(containers).map(async (container) => {
+          const svg = container.querySelector('svg');
+          if (!svg) {
+            // No SVG rendered — show source code
+            const pre = container.querySelector('pre.mermaid');
+            if (pre) {
+              const code = pre.textContent || '';
+              const codeBlock = document.createElement('pre');
+              codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
+              codeBlock.textContent = code;
+              pre.replaceWith(codeBlock);
+            }
+            return;
+          }
+
+          // Rasterize SVG to PNG via Canvas (universal compatibility)
+          const pngDataUri = await Promise.race([
+            svgToPngDataUri(svg as unknown as SVGSVGElement),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
+          ]);
 
           const pre = container.querySelector('pre.mermaid');
-          if (pre) {
-            // Clone SVG OUT of <pre> — Word applies monospace to <pre> content
-            const svgClone = svg.cloneNode(true) as Element;
-            pre.replaceWith(svgClone);
+          if (pngDataUri) {
+            const img = document.createElement('img');
+            img.src = pngDataUri;
+            img.style.cssText = 'max-width:100%;height:auto;display:block;margin:1em auto;';
+            if (pre) pre.replaceWith(img);
+            else container.appendChild(img);
+          } else {
+            // Rasterization failed — show source code
+            if (pre) {
+              const code = pre.textContent || '';
+              const codeBlock = document.createElement('pre');
+              codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
+              codeBlock.textContent = code;
+              pre.replaceWith(codeBlock);
+            }
           }
-        } else {
-          // No SVG — mermaid didn't render. Show source code readably.
-          const pre = container.querySelector('pre.mermaid');
-          if (pre) {
-            const code = pre.textContent || '';
-            const codeBlock = document.createElement('pre');
-            codeBlock.style.cssText = 'background:#f3f4f6;padding:8px;border:1px solid #d1d5db;font-size:11px;overflow-x:auto;white-space:pre-wrap;color:#374151;';
-            codeBlock.textContent = code;
-            pre.replaceWith(codeBlock);
-          }
-        }
-        // Strip container background that may hide content in Word
-        (container as HTMLElement).style.background = 'transparent';
-        (container as HTMLElement).style.border = '1px solid #d1d5db';
-      });
+          (container as HTMLElement).style.background = 'transparent';
+          (container as HTMLElement).style.border = '1px solid #d1d5db';
+        });
+        await Promise.allSettled(conversions);
+      }
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
         body{font-family:system-ui,sans-serif;line-height:1.6;max-width:800px;margin:40px auto;color:#1f2937}
         h1{font-size:1.5em;margin-top:1em}h2{font-size:1.25em;border-bottom:1px solid #e5e7eb;padding-bottom:.25em}
@@ -316,10 +337,56 @@ export function DocsViewer() {
     finally { setExporting(false); }
   }, [selectedPath, showToast]);
 
-  const exportPdf = useCallback(() => {
-    showToast('📄 Opening print dialog…');
-    window.print();
-  }, [showToast]);
+  const exportPdf = useCallback(async () => {
+    const el = contentRef.current; if (!el) return;
+    showToast('📄 Preparing PDF…');
+    try {
+      const clone = el.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span:first-child').forEach(e => e.remove());
+
+      // Convert mermaid SVGs to PNG for consistent cross-browser print output
+      const svgs = clone.querySelectorAll<SVGSVGElement>('.mermaid-container svg');
+      if (svgs.length) {
+        const conversions = Array.from(svgs).map(async (svg) => {
+          const pngDataUri = await Promise.race([
+            svgToPngDataUri(svg),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
+          ]);
+          if (pngDataUri) {
+            const img = document.createElement('img');
+            img.src = pngDataUri;
+            img.style.cssText = 'max-width:100%;height:auto;display:block;margin:1em auto;';
+            svg.replaceWith(img);
+          }
+          // If rasterization fails, inline SVG stays (graceful degradation)
+        });
+        await Promise.allSettled(conversions);
+      }
+
+      const name = selectedPath?.split('/').pop()?.replace(/\.md$/, '') || 'document';
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (!printWindow) { showToast('⚠️ Popup blocked — allow popups for PDF export'); return; }
+      printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${name}</title><style>
+        body{font-family:system-ui,sans-serif;line-height:1.6;max-width:800px;margin:40px auto;color:#1f2937;padding:20px}
+        h1{font-size:1.5em;margin-top:1em;page-break-before:always}h1:first-child{page-break-before:avoid}
+        h2{font-size:1.25em;border-bottom:1px solid #e5e7eb;padding-bottom:.25em;page-break-after:avoid}
+        h3{page-break-after:avoid}
+        pre{background:#f3f4f6;padding:1em;border:1px solid #d1d5db;border-radius:4px;overflow-x:auto;font-size:.8em}
+        code{font-family:monospace;font-size:.875em}
+        table{border-collapse:collapse;width:100%;page-break-inside:avoid}th,td{border:1px solid #d1d5db;padding:4px 8px;text-align:left}
+        blockquote{border-left:3px solid #3b82f6;padding-left:1em;color:#4b5563;margin:1em 0}
+        img{max-width:100%}svg{max-width:100%;height:auto;display:block;margin:1em 0;page-break-inside:avoid}
+        .mermaid-container{text-align:center;padding:1em;margin:1em 0;border:1px solid #d1d5db;border-radius:4px;page-break-inside:avoid}
+        .mermaid-error{background:#fef2f2;border:1px solid #fecaca;padding:1em;border-radius:4px}
+        .table-wrapper{overflow-x:auto}
+        @page{margin:1in}
+      </style></head><body>${clone.innerHTML}</body></html>`);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    } catch { showToast('⚠️ PDF export failed'); }
+  }, [selectedPath, showToast]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, DocFile[]>();
@@ -354,7 +421,7 @@ export function DocsViewer() {
         </div>
         {[...grouped.entries()].map(([dir, dirFiles]) => (
           <div key={dir}>
-            <div className={`px-3 py-1.5 text-xs font-semibold uppercase ${dark ? 'text-gray-500 bg-gray-750' : 'text-gray-400 bg-gray-100'}`}>
+            <div className={`px-3 py-1.5 text-xs font-semibold uppercase ${dark ? 'text-gray-500 bg-gray-700' : 'text-gray-400 bg-gray-100'}`}>
               {dir} ({dirFiles.length})
             </div>
             {dirFiles.map((f) => (

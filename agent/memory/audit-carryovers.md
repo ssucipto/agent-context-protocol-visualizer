@@ -119,3 +119,68 @@ carryovers:
     fix_applied_date: null
     verified_in_audit: null
     notes: "Server functions handle file I/O, process management, network — untested regression risk."
+
+  - finding_id: audit-29-F1
+    finding: "Deprecated unescape() in DocsViewer — btoa(unescape(encodeURIComponent(...))) uses removed Web API. Replace with TextEncoder-based base64 encoding."
+    severity: medium
+    status: pending
+    audit_ref: audit-29-codebase-bugs-gaps-mermaid-guard
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-29-F2
+    finding: "Non-existent Tailwind class bg-gray-750 in DocsViewer sidebar — no styling applied in dark mode. Use bg-gray-700 or bg-gray-800."
+    severity: medium
+    status: pending
+    audit_ref: audit-29-codebase-bugs-gaps-mermaid-guard
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-29-F3
+    finding: "Missing clearTimeout in showToast — unmounted component could trigger setState on unmounted component. Store timer ref and clear on unmount."
+    severity: low
+    status: pending
+    audit_ref: audit-29-codebase-bugs-gaps-mermaid-guard
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-29-F5
+    finding: "CSS color-adjust deprecated — add standard print-color-adjust: exact alongside -webkit-print-color-adjust: exact"
+    severity: low
+    status: pending
+    audit_ref: audit-29-codebase-bugs-gaps-mermaid-guard
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-29-F7
+    finding: "No React error boundary — any render error crashes entire app with blank page. Add ErrorBoundary wrapping Outlet in __root.tsx."
+    severity: medium
+    status: pending
+    audit_ref: audit-29-codebase-bugs-gaps-mermaid-guard
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-30-F1
+    finding: "CRITICAL: Word export doesn't show mermaid diagrams — data:image/svg+xml;base64 URIs are NOT supported by Microsoft Word's HTML import engine. Fix: Canvas-based SVG→PNG rasterization."
+    severity: critical
+    status: pending
+    audit_ref: audit-30-mermaid-export-to-image
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-30-F2
+    finding: "PDF export has no SVG→image conversion — inline SVGs passed through to print window. Should also use Canvas PNG rasterization."
+    severity: high
+    status: pending
+    audit_ref: audit-30-mermaid-export-to-image
+    fix_applied_date: null
+    verified_in_audit: null
+
+  - finding_id: audit-30-F3
+    finding: "No Canvas-based PNG rasterization utility — need svgToPngDataUri() using Canvas API + Image + Blob for universal Word/PDF/browser compatibility."
+    severity: high
+    status: pending
+    audit_ref: audit-30-mermaid-export-to-image
+    fix_applied_date: null
+    verified_in_audit: null
+

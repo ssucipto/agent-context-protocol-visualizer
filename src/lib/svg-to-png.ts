@@ -3,12 +3,12 @@
  *
  * Converts an SVG DOM element to a `data:image/png;base64` data URI
  * using the HTML Canvas API. Produces PNG images that work universally
- * in Word (.doc), PDF print output, and all browsers — unlike
- * `data:image/svg+xml;base64` which fails in Microsoft Word.
+ * in Word (.doc), PDF print output, and all browsers.
  *
  * Key challenge: mermaid SVGs use CSS classes from theme stylesheets.
  * We inline computed styles (fill, stroke, font) before rasterization
- * so the standalone Image retains all visual properties.
+ * so the standalone Image retains all visual properties. The root SVG
+ * element and all descendants are processed for complete style coverage.
  *
  * @param svgElement - The live SVG element from the DOM
  * @param scale - Output scale factor (default 2x for HiDPI)
@@ -19,24 +19,40 @@ export async function svgToPngDataUri(
   scale = 2,
 ): Promise<string | null> {
   try {
-    // 1. Clone and inline computed styles
+    // 1. Clone and inline computed styles on ALL elements including root
     const clone = svgElement.cloneNode(true) as SVGSVGElement;
-    const originalElements = svgElement.querySelectorAll('*');
-    const clonedElements = clone.querySelectorAll('*');
 
-    for (let i = 0; i < originalElements.length; i++) {
-      const orig = originalElements[i] as SVGElement;
-      const cln = clonedElements[i] as SVGElement;
+    // Collect all elements: root + descendants
+    const allOriginal: SVGElement[] = [svgElement as SVGElement];
+    svgElement.querySelectorAll('*').forEach((el) => allOriginal.push(el as SVGElement));
+
+    const allCloned: SVGElement[] = [clone as SVGElement];
+    clone.querySelectorAll('*').forEach((el) => allCloned.push(el as SVGElement));
+
+    // CSS properties to inline — covers mermaid theme + text positioning
+    const PROPS = [
+      'fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity',
+      'stroke-dasharray', 'font-family', 'font-size', 'font-weight',
+      'opacity', 'text-anchor', 'dominant-baseline', 'color',
+    ];
+
+    // Defaults that should NOT be inlined (would override inherited values)
+    const SKIP_VALUES = new Set([
+      'normal', 'auto', 'none', 'rgba(0, 0, 0, 0)',
+      '0', // stroke-width=0 means no stroke
+    ]);
+
+    for (let i = 0; i < allOriginal.length; i++) {
+      const orig = allOriginal[i];
+      const cln = allCloned[i];
       if (!orig || !cln) continue;
 
       const computed = window.getComputedStyle(orig);
       const styles: string[] = [];
 
-      // Inline key presentation attributes — mermaid uses these for text positioning
-      for (const prop of ['fill', 'stroke', 'stroke-width', 'font-family',
-        'font-size', 'font-weight', 'opacity', 'text-anchor', 'dominant-baseline', 'color']) {
+      for (const prop of PROPS) {
         const val = computed.getPropertyValue(prop);
-        if (val && val !== 'normal' && val !== 'auto' && val !== 'rgba(0, 0, 0, 0)') {
+        if (val && !SKIP_VALUES.has(val) && !val.startsWith('rgba(0, 0, 0, 0')) {
           styles.push(`${prop}:${val}`);
         }
       }
@@ -48,16 +64,17 @@ export async function svgToPngDataUri(
       }
     }
 
-    // 2. Determine dimensions
+    // 2. Determine dimensions from viewBox or bounding rect
     const vb = clone.viewBox?.baseVal;
     let w = vb?.width || svgElement.getBoundingClientRect().width || 800;
     let h = vb?.height || svgElement.getBoundingClientRect().height || 400;
     if (w <= 0) w = 800;
     if (h <= 0) h = 400;
 
-    // 3. Serialize to string and create blob URL
-    const svgString = new XMLSerializer().serializeToString(clone);
-    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    // 3. Serialize to standalone SVG document with XML declaration
+    const svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      new XMLSerializer().serializeToString(clone);
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(svgBlob);
 
     // 4. Load as Image and draw to Canvas
@@ -77,14 +94,31 @@ export async function svgToPngDataUri(
         ctx.drawImage(img, 0, 0, w, h);
 
         URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL('image/png'));
+
+        // Detect blank canvas (image didn't render)
+        const imageData = ctx.getImageData(0, 0, 1, 1);
+        const isBlank = imageData.data[0] === 255 && imageData.data[1] === 255 &&
+          imageData.data[2] === 255 && imageData.data[3] === 255;
+
+        if (isBlank) {
+          // Try once more without style inlining in case styles broke rendering
+          console.warn('[svgToPng] blank canvas detected — possible style conflict');
+          resolve(null);
+        } else {
+          resolve(canvas.toDataURL('image/png'));
+        }
       };
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        console.warn('[svgToPng] image load failed:', e);
+        resolve(null);
+      };
       img.src = url;
     });
 
     return png;
-  } catch {
+  } catch (err) {
+    console.warn('[svgToPng] exception:', err instanceof Error ? err.message : err);
     return null;
   }
 }

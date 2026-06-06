@@ -105,6 +105,10 @@ export function DocsViewer() {
     return addAnchors(withTables);
   }, [content]);
 
+  // Memoize innerHTML object — prevents React from re-applying innerHTML
+  // on unrelated re-renders (e.g. setExporting), which destroys mermaid SVGs.
+  const innerHtml = useMemo(() => ({ __html: html }), [html]);
+
   // Track active heading on scroll
   const [activeId, setActiveId] = useState('');
   useEffect(() => {
@@ -272,15 +276,16 @@ export function DocsViewer() {
       clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span:first-child').forEach(e => e.remove());
 
       // Convert mermaid SVGs to PNG images (Word doesn't support inline SVG or SVG data URIs)
+      // IMPORTANT: Query live SVGs for getComputedStyle (clone SVGs are detached)
+      const liveContainers = el.querySelectorAll<HTMLElement>('.mermaid-container');
       const containers = clone.querySelectorAll<HTMLElement>('.mermaid-container');
       if (containers.length) {
-        const conversions = Array.from(containers).map(async (container) => {
+        const conversions = Array.from(containers).map(async (container, i) => {
           (container as HTMLElement).style.background = 'transparent';
           (container as HTMLElement).style.border = '1px solid #d1d5db';
 
           const svg = container.querySelector('svg');
           if (!svg) {
-            // No SVG rendered — show source code
             const pre = container.querySelector('pre.mermaid');
             if (pre) {
               const code = pre.getAttribute('data-mermaid-src') || pre.textContent || '';
@@ -292,9 +297,10 @@ export function DocsViewer() {
             return;
           }
 
-          // Rasterize SVG to PNG via Canvas (universal compatibility)
+          // Use LIVE SVG for getComputedStyle (clone SVG is detached → no styles)
+          const liveSvg = liveContainers[i]?.querySelector('svg') as SVGSVGElement | null;
           const pngDataUri = await Promise.race([
-            svgToPngDataUri(svg as unknown as SVGSVGElement),
+            svgToPngDataUri(liveSvg || (svg as unknown as SVGSVGElement)),
             new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
           ]);
 
@@ -346,11 +352,14 @@ export function DocsViewer() {
       clone.querySelectorAll('.heading-anchor, .code-copy-btn, .code-block-header, .mermaid-loading, .mermaid-error span:first-child').forEach(e => e.remove());
 
       // Convert mermaid SVGs to PNG for consistent cross-browser print output
+      // Use live SVGs for getComputedStyle (clone SVGs are detached)
+      const liveSvgs = el.querySelectorAll<SVGSVGElement>('.mermaid-container svg');
       const svgs = clone.querySelectorAll<SVGSVGElement>('.mermaid-container svg');
       if (svgs.length) {
-        const conversions = Array.from(svgs).map(async (svg) => {
+        const conversions = Array.from(svgs).map(async (svg, i) => {
+          const liveSvg = liveSvgs[i] || svg;
           const pngDataUri = await Promise.race([
-            svgToPngDataUri(svg),
+            svgToPngDataUri(liveSvg),
             new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
           ]);
           if (pngDataUri) {
@@ -469,7 +478,7 @@ export function DocsViewer() {
           ) : (
             <div
               className={`prose-doc max-w-4xl ${dark ? 'prose-invert' : ''}`}
-              dangerouslySetInnerHTML={{ __html: html }}
+              dangerouslySetInnerHTML={innerHtml}
             />
           )}
         </div>

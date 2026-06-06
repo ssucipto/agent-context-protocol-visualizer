@@ -5,6 +5,70 @@ All notable changes to ACP Enhanced Visualizer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-06-06
+
+### Added
+
+- **Mermaid Flowcharts (M39)**: Render diagrams inline in the markdown viewer
+  (flowchart, sequence, class, state diagrams). Click-to-zoom SVG lightbox.
+  Dark/light theme support with `securityLevel: loose`.
+- **Document Export (M39)**: One-click export to Word (.doc) with embedded
+  mermaid diagrams as PNG images. Export to PDF via print dialog with
+  `@media print` CSS optimization.
+- **Export Hardening (M40)**: Canvas-based SVG→PNG rasterization utility
+  (`svgToPngDataUri()`) with CSS inlining via `getComputedStyle()`. Word
+  export now uses PNG images instead of SVG data URIs (which Word doesn't
+  support). PDF export also rasterizes mermaid diagrams to PNG for
+  consistent cross-browser print output.
+- **React Error Boundary (M40)**: `ErrorBoundary` component wrapping the
+  layout shell with a11y `role="alert"` fallback UI. Dev mode error details.
+- **print-color-adjust CSS (M40)**: Standard CSS property added alongside
+  vendor-prefixed versions for print output.
+- **Server Function Tests (M40)**: 13 new tests for path sanitization
+  and YAML parsing utilities. 97→110 tests total.
+- **Code Coverage (M40)**: Calibrated vitest coverage thresholds
+  (statements:40, branches:30, functions:35, lines:44). `coverage/`
+  gitignored.
+- **Devtools Opt-In**: `@tanstack/devtools-vite` and `TanStackDevtools`
+  disabled by default. Set `VITE_ENABLE_DEVTOOLS=true` to enable.
+
+### Fixed
+
+- **Word Export Mermaid Diagrams**: `data:image/svg+xml;base64` replaced
+  with `data:image/png;base64` — Word's HTML import doesn't support SVG
+  data URIs but supports PNG.
+- **LessonsFeed Duplicate Keys**: Composite key (`task_type::date::index`)
+  replaces non-unique `task_type` key, eliminating React duplicate-key
+  console warnings that fed into Vite echo loop.
+- **Vite 8 SSR Echo Loop**: Server-side `customLogger` with 6 suppression
+  patterns breaks client→server console relay feedback loop that caused
+  SIGABRT (exit 134) on Windows and macOS.
+- **Container Style Leak**: Word export now always applies
+  `background:transparent` and border to mermaid containers.
+- **CSS Inlining Bug**: Fixed missing semicolon separator when appending
+  computed styles to existing inline styles.
+- **Print Window Race**: `printWindow.close()` deferred 500ms after
+  `print()` for Safari compatibility.
+- **bg-gray-750** → `bg-gray-800`: Non-existent Tailwind class fixed.
+- **Toast Cleanup**: `clearTimeout` on unmount prevents React setState
+  warning.
+- **CSS Regression (M39)**: Mermaid SVGs at 60% opacity fixed with
+  `:not(:has(svg))` selector.
+
+### Changed
+
+- **Console Error Filter**: Broadened from 4→7 patterns including
+  `[Server]`, `[console.error]`, `Internal React error`.
+- **Coverage Thresholds**: Adjusted to reflect current coverage levels
+  (40/30/35/44).
+- **README**: Updated badges (version 1.5.3, 16 milestones, 110 tests).
+  Added Mermaid, Export, and Error Boundary feature descriptions.
+
+### Deprecated
+
+- **`unescape()`**: SVG→base64 code path removed entirely (replaced by
+  Canvas PNG rasterization). Zero `unescape()` calls in codebase.
+
 ## [1.5.2] - 2026-06-04
 
 ### Added

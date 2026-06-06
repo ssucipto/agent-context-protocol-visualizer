@@ -390,7 +390,7 @@ export function DocsViewer() {
         img{max-width:100%}svg{max-width:100%;height:auto;display:block;margin:1em 0;page-break-inside:avoid}
         .mermaid-container{text-align:center;padding:1em;margin:1em 0;border:1px solid #d1d5db;border-radius:4px;page-break-inside:avoid}
         .mermaid-error{background:#fef2f2;border:1px solid #fecaca;padding:1em;border-radius:4px}
-        .table-wrapper{overflow-x:auto}
+        .table-wrapper{max-width:100%;overflow-x:auto}
         @page{margin:1in}
       </style></head><body>${clone.innerHTML}</body></html>`);
       printWindow.document.close();

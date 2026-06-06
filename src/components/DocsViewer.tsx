@@ -326,6 +326,16 @@ export function DocsViewer() {
         });
         await Promise.allSettled(conversions);
       }
+
+      // Fix tables for Word — CSS max-width is ignored, use HTML attributes
+      clone.querySelectorAll('table').forEach((table) => {
+        table.setAttribute('width', '100%');
+        (table as HTMLElement).style.tableLayout = 'fixed';
+      });
+      clone.querySelectorAll('th, td').forEach((cell) => {
+        (cell as HTMLElement).style.wordBreak = 'break-word';
+      });
+
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
         body{font-family:system-ui,sans-serif;line-height:1.6;max-width:800px;margin:40px auto;color:#1f2937}
         h1{font-size:1.5em;margin-top:1em}h2{font-size:1.25em;border-bottom:1px solid #e5e7eb;padding-bottom:.25em}

@@ -48,6 +48,15 @@
     - svg-to-png-xml-declaration-blob-type-fixed
     - changelog-1-5-3-entry-added
     - session-committed-9-entries
+    - svg-crossorigin-anonymous-for-tainted-canvas-fix
+    - svg-try-catch-todataurl-securityerror-handling
+    - svg-dual-approach-blob-and-data-uri-fallback
+    - export-live-svg-getcomputedstyle-not-clone
+    - export-memoized-dangerouslysetinnerhtml
+    - export-data-mermaid-src-fallback-not-css-text
+    - export-word-image-width-650px-html-attribute
+    - export-word-table-width-100-percent-word-compat
+    - export-pdf-svg-styles-persist-on-fallback
   deferred:
     - remaining-8-server-function-tests
     - playwright-e2e-tests

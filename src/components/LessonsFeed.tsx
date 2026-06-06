@@ -62,8 +62,8 @@ export function LessonsFeed() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((l) => {
-            const key = l.task_type;
+          {filtered.map((l, i) => {
+            const key = `${l.task_type}::${l.mistakes?.[0]?.date ?? i}::${i}`;
             return (
               <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
                 <button onClick={() => toggle(key)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left">

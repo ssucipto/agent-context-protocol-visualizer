@@ -70,6 +70,19 @@
 
 ## 🚦 Quick Start
 
+### Branch Strategy
+
+| Branch | Purpose | CI |
+|--------|---------|----|
+| `main` | Stable releases. PRs from `develop` trigger npm publish + GitHub Release | ✅ Full CI + Release |
+| `develop` | Active development for M41+ milestones. Bug fixes, new features | ✅ Full CI |
+
+**Workflow**:
+1. Work on `develop` for milestone implementation
+2. Open PR from `develop` → `main` when milestone is complete
+3. CI runs tests, build, coverage on both branches
+4. Merging to `main` triggers automated npm publish + GitHub Release
+
 ### One-liner install
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ssucipto/ACPEnhanced-Visual/main/scripts/install.sh | bash

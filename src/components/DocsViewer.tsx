@@ -66,6 +66,7 @@ export function DocsViewer() {
   const contentRef = useRef<HTMLDivElement>(null);
   const mermaidRetryRef = useRef(0);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const droppedRef = useRef(false); // guard: skip server fetch for drag-and-drop files
 
   useEffect(() => {
     listDocs().then((r) => { setFiles(r.files); setLoading(false); });
@@ -73,6 +74,7 @@ export function DocsViewer() {
 
   useEffect(() => {
     if (!selectedPath) return;
+    if (droppedRef.current) { droppedRef.current = false; return; } // skip server fetch for dropped files
     readDoc({ data: { path: selectedPath } }).then((r) => setContent(r.content));
   }, [selectedPath]);
 
@@ -249,7 +251,11 @@ export function DocsViewer() {
     const file = e.dataTransfer.files[0];
     if (!file?.name.endsWith('.md')) return;
     const reader = new FileReader();
-    reader.onload = () => setContent(reader.result as string);
+    reader.onload = () => {
+      droppedRef.current = true; // guard: prevent server fetch from overwriting dropped content
+      setSelectedPath(`[dropped] ${file.name}`);
+      setContent(reader.result as string);
+    };
     reader.readAsText(file);
   }, []);
 

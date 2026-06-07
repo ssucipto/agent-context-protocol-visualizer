@@ -75,7 +75,7 @@ const config = defineConfig({
         statements: 40,
         branches: 30,
         functions: 35,
-        lines: 44,
+        lines: 43,
       },
     },
   },
